@@ -1,12 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World Example</title>
-  </head>
-  <body>
-    <b>Hello World</b>
-    <p>Hello World</p>
-  </body>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>BabylonJS VR Orientation iOS</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+</head>
+<body>
+    <canvas id="renderCanvas" style="width: 100%; height: 100%; touch-action: none;"></canvas>
+    <button id="startVR" style="position: absolute; top: 10px; left: 10px; z-index: 10;">Başlat</button>
+
+    <script>
+    const canvas = document.getElementById("renderCanvas");
+    const engine = new BABYLON.Engine(canvas, true);
+
+    let scene, vrCamera;
+
+    // iOS için sensör izni iste
+    async function requestIOSPermissionIfNeeded() {
+        if (typeof DeviceOrientationEvent !== 'undefined' &&
+            typeof DeviceOrientationEvent.requestPermission === 'function') {
+            try {
+                const permissionState = await DeviceOrientationEvent.requestPermission();
+                if (permissionState === 'granted') {
+                    console.log("iOS sensör izni verildi");
+                    return true;
+                } else {
+                    alert("Sensör izni verilmedi");
+                    return false;
+                }
+            } catch (err) {
+                alert("Sensör izni alınırken hata oluştu: " + err);
+                return false;
+            }
+        } else {
+            // Android, masaüstü gibi
+            return true;
+        }
+    }
+
+    // Sahne oluştur
+    async function createScene() {
+        scene = new BABYLON.Scene(engine);
+
+        // Kamera
+        vrCamera = new BABYLON.VRDeviceOrientationFreeCamera("vrCam", new BABYLON.Vector3(0, 1.6, -10), scene);
+        vrCamera.setTarget(new BABYLON.Vector3(0, 1.6, 0));
+        vrCamera.attachControl(canvas, true);
+        scene.activeCamera = vrCamera;
+
+        // Işık
+        const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+        light.intensity = 0.7;
+
+        // Objeler
+        const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 2 }, scene);
+        sphere.position.y = 1;
+
+        const redMat = new BABYLON.StandardMaterial("red", scene);
+        redMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
+        redMat.emissiveColor = new BABYLON.Color3(1, 0, 0);
+
+        const greenMat = new BABYLON.StandardMaterial("green", scene);
+        greenMat.diffuseColor = new BABYLON.Color3(0, 1, 0);
+
+        const blueMat = new BABYLON.StandardMaterial("blue", scene);
+        blueMat.diffuseColor = new BABYLON.Color3(0, 0, 1);
+
+        const plane1 = BABYLON.Mesh.CreatePlane("plane1", 3, scene, true, BABYLON.Mesh.DOUBLESIDE);
+        plane1.position.x = -3;
+        plane1.position.z = 0;
+        plane1.material = redMat;
+
+        const plane2 = BABYLON.Mesh.CreatePlane("plane2", 3, scene, true, BABYLON.Mesh.DOUBLESIDE);
+        plane2.position.x = 3;
+        plane2.position.z = -1.5;
+        plane2.material = greenMat;
+
+        const plane3 = BABYLON.Mesh.CreatePlane("plane3", 3, scene, true, BABYLON.Mesh.DOUBLESIDE);
+        plane3.position.x = 3;
+        plane3.position.z = 1.5;
+        plane3.material = blueMat;
+
+        const ground = BABYLON.Mesh.CreateGround("ground1", 10, 10, 2, scene);
+
+        return scene;
+    }
+
+    document.getElementById("startVR").onclick = async () => {
+        const permissionGranted = await requestIOSPermissionIfNeeded();
+        if (!permissionGranted) return;
+
+        await createScene();
+        engine.runRenderLoop(() => {
+            if (scene) scene.render();
+        });
+
+        window.addEventListener("resize", () => engine.resize());
+    };
+    </script>
+</body>
 </html>
