@@ -44,6 +44,10 @@
                 width: 100%;
                 height: 100%;
             }
+            #enlargeButton {
+  width: 48px;
+  height: 48px;
+}
         </style>
     </head>
     <body>
@@ -84,11 +88,12 @@
     canvasParent.appendChild(hudLayer);
 
     const enlargeButton = document.createElement('button');
+    enlargeButton.id = 'enlargeButton'; // ❗ Stil tanımı için ID veriyoruz
     hudLayer.appendChild(enlargeButton);
     enlargeButton.style.position = 'absolute';
     enlargeButton.style.right = '0px';
     enlargeButton.style.bottom = '0px';
-    enlargeButton.style.width = '48px';
+    //enlargeButton.style.width = '48px';
     //enlargeButton.style.height = '48px';
     enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
     enlargeButton.style.backgroundSize = 'contain';
