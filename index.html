@@ -126,7 +126,8 @@ async function adjustButtonSizeByOrientation() {
         enlargeButton.style.width = `${size}px`;
         enlargeButton.style.height = `${size}px`;
     } else {
-	//const size = Math.ceil(window.innerHeight / window.innerWidth * 48);
+	const size = Math.ceil(window.innerHeight / window.innerWidth * 48);
+	    console.log("iOS sensör izni hatası: size")
         enlargeButton.style.width = '48px'; // <-- backtick (`) ile yazıldı
         enlargeButton.style.height = '48px';
     }
