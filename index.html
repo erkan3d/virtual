@@ -97,26 +97,70 @@ var createScene = async function () {
     const hudLayer = document.createElement('div');
     canvasParent.appendChild(hudLayer);
 
-    const enlargeButton = document.createElement('button');
-    hudLayer.appendChild(enlargeButton);
-    enlargeButton.style.position = 'absolute';
-    enlargeButton.style.right = '0px';
-    enlargeButton.style.bottom = '0px';
-    enlargeButton.style.width = '48px';
-    enlargeButton.style.height = '48px';
-    enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
-    enlargeButton.style.backgroundSize = 'contain';
-    enlargeButton.style.backgroundColor = 'transparent';
-    enlargeButton.style.border = 'none';
-    enlargeButton.style.cursor = 'pointer';
-    enlargeButton.style.pointerEvents = 'all';
-    enlargeButton.style.zIndex = '9999';
-    enlargeButton.style.transform = 'translateZ(0)';
+const enlargeButton = document.createElement('button');
+document.body.appendChild(enlargeButton);
+
+enlargeButton.style.position = 'fixed';  // fixed yapıldı, sayfaya sabitlendi
+enlargeButton.style.right = '0px';
+enlargeButton.style.bottom = '30px';
+enlargeButton.style.width = '48px';
+enlargeButton.style.height = '48px';
+enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
+enlargeButton.style.backgroundSize = 'contain';
+enlargeButton.style.backgroundColor = 'transparent';
+enlargeButton.style.border = 'none';
+enlargeButton.style.cursor = 'pointer';
+enlargeButton.style.pointerEvents = 'all';
+enlargeButton.style.zIndex = '9999';  // En üst z-index
+enlargeButton.style.transform = 'translateZ(0)';
+
+// 1. HUD layer içinde kullanılacak ikinci buton
+const vrExitButton = document.createElement('button');
+hudLayer.appendChild(vrExitButton)
+vrExitButton.id = "vrExitButton";
+vrExitButton.style.position = 'absolute';
+vrExitButton.style.right = '0px';
+vrExitButton.style.bottom = '0px';
+vrExitButton.style.width = '48px';
+vrExitButton.style.height = '48px';
+vrExitButton.style.background = `url('https://cdn-icons-png.freepik.com/256/1828/1828778.png') no-repeat center`;
+vrExitButton.style.backgroundSize = 'contain';
+vrExitButton.style.backgroundColor = 'transparent';
+vrExitButton.style.border = 'none';
+vrExitButton.style.cursor = 'pointer';
+vrExitButton.style.zIndex = '9999';
+vrExitButton.style.pointerEvents = 'auto';
+vrExitButton.style.width = '32px';
+vrExitButton.style.height = '32px';
+vrExitButton.style.filter = "invert(100%)"; //renkleri ters  çevir
+// Başlangıçta gizle
+vrExitButton.style.display = 'none';
+
+// Butona tıklayınca fullscreen'den çık
+vrExitButton.onclick = () => {
+    document.exitFullscreen();
+};
+
 
     enlargeButton.onclick = async function () {
+        if (BABYLON.Engine.IsIOS && !sensorPermissionGranted) {
+            try {
+                if (typeof DeviceOrientationEvent !== 'undefined' &&
+                    typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    const permission = await DeviceOrientationEvent.requestPermission();
+                    if (permission === 'granted') {
+                        sensorPermissionGranted = true;
+                        toggleVRMode();
+                    }
+                }
+            } catch (error) {
+                console.error("Sensör izni alınamadı:", error);
+            }
+            return;
+        }
+
         toggleVRMode();
     };
-
     let enlargeStatus = false;
     function toggleVRMode() {
         if (!enlargeStatus) {
@@ -138,10 +182,10 @@ cardboardStrip.style.width = '20%';
 cardboardStrip.style.height = '100%';
 cardboardStrip.style.pointerEvents = 'none';
 cardboardStrip.style.zIndex = '9';
+document.body.appendChild(enlargeButton);
 
 let lastButtonPressTime = 0;
 let activeCardboardPointerId = null;
-
 cardboardStrip.addEventListener("pointerdown", (event) => {
     const now = Date.now();
     if (now - lastButtonPressTime < 300) return;
@@ -152,7 +196,6 @@ cardboardStrip.addEventListener("pointerdown", (event) => {
     handleMovementInput();
     movementState.forward = true;
 });
-
 cardboardStrip.addEventListener("pointerup", (event) => {
     if (event.pointerId === activeCardboardPointerId) {
         movementState.forward = false;
@@ -160,6 +203,39 @@ cardboardStrip.addEventListener("pointerup", (event) => {
     }
 });
 
+var usingVR = false;
+var sensorPermissionGranted = false;
+
+    document.addEventListener("fullscreenchange", () => {
+        if (!document.fullscreenElement) {
+            enlargeButton.style.backgroundImage = "url('https://cdn-icons-png.freepik.com/256/17460/17460854.png')";
+            cardboardStrip.style.pointerEvents = 'none';
+            if (usingVR) {
+            scene.activeCamera = freeCamera;
+            freeCamera.attachControl(canvas);
+            vrCamera.detachControl(canvas);
+            usingVR = false;
+            enlargeStatus = false;
+            vrExitButton.style.display = 'none'; // VR'den çıkınca gizle
+            }
+        } else {
+            vrExitButton.style.display = 'block'; // VR'de göster
+            
+            scene.activeCamera = vrCamera;
+            enlargeButton.style.backgroundImage = "url('https://cdn-icons-png.freepik.com/256/18672/18672116.png')";
+            cardboardStrip.style.pointerEvents = 'all';
+            if (sensorPermissionGranted || !BABYLON.Engine.IsIOS) {
+            scene.activeCamera = vrCamera;
+            vrCamera.attachControl(canvas, true);
+            freeCamera.detachControl(canvas);
+            usingVR = true;
+            clearPreviousMeasurement();  
+            }
+        }
+    });
+
+
+/*
 // tam ekerana geçiş ve IOS sensor kullanımı için kullanıcı izni
 var usingVR = false;
 var sensorPermissionGranted = false;
@@ -208,7 +284,7 @@ async function handleFullscreenChange() {
 }
 document.addEventListener("fullscreenchange", handleFullscreenChange);
 document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
-
+*/
 
     // Yürüme kontrolü
     let speedLevel = 0;
