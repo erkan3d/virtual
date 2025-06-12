@@ -96,7 +96,14 @@
 
     const hudLayer = document.createElement('div');
     canvasParent.appendChild(hudLayer);
+		
+function setButtonSizeInPhysicalPixels(button, physicalSizePx = 48) {
+    const dpr = window.devicePixelRatio || 1;
+    const cssSize = physicalSizePx / dpr;
 
+    button.style.width = `${cssSize}px`;
+    button.style.height = `${cssSize}px`;
+}
     const enlargeButton = document.createElement('button');
     hudLayer.appendChild(enlargeButton);
     enlargeButton.style.position = 'absolute';
@@ -116,27 +123,16 @@
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
-function adjustButtonSizeByOrientation() {
-    const isPortrait = screen.height > screen.width; // 🔁 ekranın fiziksel oranına bak
 
-    if (isPortrait) {
-        // Dikey mod
-		enlargeButton.style.right = '0px';
-		enlargeButton.style.bottom = '0px';
-        enlargeButton.style.width = 'screen.height/24';
-        enlargeButton.style.height = 'screen.height/24';
-    } else {
-        // Yatay mod
-		enlargeButton.style.right = '0px';
-		enlargeButton.style.bottom = '0px';
-        enlargeButton.style.width = 'screen.width/24';
-        enlargeButton.style.height = 'screen.width/24';
-    }
+// Fiziksel boyutu ayarla (48px gerçek piksel)
+function updateButtonSize() {
+    setButtonSizeInPhysicalPixels(enlargeButton, 48);
 }
-//window.addEventListener("resize", adjustButtonSizeByOrientation);
-window.addEventListener("orientationchange", adjustButtonSizeByOrientation);
-adjustButtonSizeByOrientation();
 
+// Sayfa yüklenince ve döndürülünce güncelle
+window.addEventListener("load", updateButtonSize);
+window.addEventListener("resize", updateButtonSize);
+window.addEventListener("orientationchange", updateButtonSize);
     let enlargeStatus = false;
     function toggleVRMode() {
         if (!enlargeStatus) {
