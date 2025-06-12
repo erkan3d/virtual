@@ -117,7 +117,7 @@ var createScene = async function () {
         toggleVRMode();
     };
 async function adjustButtonSizeByOrientation() {
-    const size = window.innerWidth / window.innerHeight * 48;
+    const size =  window.innerHeight / window.innerWidth * 48;
     if (window.innerHeight > window.innerWidth) {
         // Dikey mod
         enlargeButton.style.width = '${size}px';
