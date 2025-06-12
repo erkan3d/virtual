@@ -106,12 +106,12 @@ function adjustButtonSizeByOrientation() {
 
     if (isPortrait) {
         // Dikey mod
-            enlargeButton.style.width = 'window.innerWidth/24';
-            enlargeButton.style.height = 'window.innerWidth/24';
+            enlargeButton.style.width = 'screen.width/24';
+            enlargeButton.style.height = 'screen.width/24';
     } else {
         // Yatay mod
-            enlargeButton.style.width = 'window.innerHeight/24';
-            enlargeButton.style.height = 'window.innerHeight/24';
+            enlargeButton.style.width = 'screen.height/24';
+            enlargeButton.style.height = 'screen.height/24';
     }
 }
 window.addEventListener("resize", adjustButtonSizeByOrientation);
