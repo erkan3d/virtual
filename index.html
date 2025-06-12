@@ -167,7 +167,31 @@ window.addEventListener("load", () => setButtonSizeInPhysicalPixels(DEFAULT_PHYS
 // İlk ayarlama
 adjustButtonSizeByOrientation(DEFAULT_PHYSICAL_SIZE);
 
-	
+*/	
+	// 1. Hedef fiziksel piksel boyutu
+const DEFAULT_PHYSICAL_SIZE = 48;
+
+// 2. Boyutu fiziksel piksel bazında ayarlayan fonksiyon
+function setButtonSizeInPhysicalPixels(physicalPx) {
+  const cssPx = physicalPx / window.devicePixelRatio;
+  enlargeButton.style.width = `${cssPx}px`;
+  enlargeButton.style.height = `${cssPx}px`;
+}
+
+// 3. Döndürme veya yeniden boyutlama olduğunda tekrar uygula
+function triggerAdjustButtonSize() {
+  setTimeout(() => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE), 150);
+}
+
+// 4. Olayları dinle
+window.addEventListener("resize", triggerAdjustButtonSize);
+window.addEventListener("orientationchange", triggerAdjustButtonSize);
+window.addEventListener("load", () => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE));
+
+// 5. Sayfa ilk açıldığında uygula
+setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE);
+
+// 6. VR geçiş fonksiyonu örnek
     let enlargeStatus = false;
     function toggleVRMode() {
         if (!enlargeStatus) {
@@ -178,7 +202,9 @@ adjustButtonSizeByOrientation(DEFAULT_PHYSICAL_SIZE);
             enlargeStatus = false;
         }
     }
-*/
+
+
+	
 // Cardboard şeridi (orta alan, başta pasif)
 const cardboardStrip = document.createElement('div');
 canvasParent.appendChild(cardboardStrip);
