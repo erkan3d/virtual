@@ -2,134 +2,94 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>BabylonJS iOS VR Test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <title>BabylonJS VR Test (Playground)</title>
   <script src="https://cdn.babylonjs.com/babylon.js"></script>
 </head>
 <body style="margin:0;overflow:hidden">
   <div id="canvasZone" style="position:relative;width:100vw;height:100vh">
     <canvas id="renderCanvas" style="width:100%;height:100%;touch-action:none"></canvas>
-    <!-- enlargeButton HUD -->
     <button id="enlargeButton"
       style="position:absolute;right:10px;bottom:10px;width:48px;height:48px;
              background:url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center;
              background-size:contain;border:none;cursor:pointer;z-index:9999">
     </button>
   </div>
+
   <script>
     const canvas = document.getElementById("renderCanvas");
     const canvasParent = document.getElementById("canvasZone");
     const enlargeButton = document.getElementById("enlargeButton");
     const engine = new BABYLON.Engine(canvas, true);
-    let scene, vrCamera;
-    let enlargeStatus = false;
+
     let sensorPermissionGranted = false;
+    let vrMode = false;
+    let freeCamera, vrCamera, scene;
 
-    async function requestIOSPermissionIfNeeded() {
-      if (BABYLON.Engine.IsIOS &&
-          typeof DeviceOrientationEvent !== 'undefined' &&
-          typeof DeviceOrientationEvent.requestPermission === 'function' &&
-          !sensorPermissionGranted) {
-        try {
-          const permission = await DeviceOrientationEvent.requestPermission();
-          if (permission === 'granted') {
-            sensorPermissionGranted = true;
-            return true;
-          } else {
-            alert("VR modu için sensör izni gerekli.");
-            return false;
-          }
-        } catch (err) {
-          alert("Sensör izni alınamadı: " + err);
-          return false;
-        }
-      }
-      return true;
-    }
-
-    async function toggleVRMode() {
-      if (!enlargeStatus) {
-        // iOS sensör izni istemeden fullscreen geçemez
-        const ok = await requestIOSPermissionIfNeeded();
-        if (!ok) return;
-        try {
-          await canvasParent.requestFullscreen();
-        } catch (e) {
-          console.error("Fullscreen geçişi başarısız:", e);
-        }
-      } else {
-        try {
-          await document.exitFullscreen();
-        } catch (e) {
-          console.error("Fullscreen çıkışı başarısız:", e);
-        }
-      }
-    }
-
-    document.addEventListener("fullscreenchange", () => {
-      enlargeStatus = !!document.fullscreenElement;
-      enlargeButton.style.backgroundImage = enlargeStatus
-        ? "url('https://cdn-icons-png.freepik.com/512/9425/9425505.png')"
-        : "url('https://cdn-icons-png.freepik.com/256/17460/17460854.png')";
-      if (enlargeStatus) {
-        if (sensorPermissionGranted || !BABYLON.Engine.IsIOS) {
-          vrCamera.attachControl(canvas, true);
-          scene.activeCamera = vrCamera;
-        }
-      } else {
-        const freeCamera = scene.getCameraByName("freeCam");
-        freeCamera.attachControl(canvas, true);
-        scene.activeCamera = freeCamera;
-      }
-    });
-
-    enlargeButton.addEventListener("click", toggleVRMode);
-    enlargeButton.addEventListener("touchend", toggleVRMode);
-
-    async function createScene() {
+    const createScene = function () {
       scene = new BABYLON.Scene(engine);
-      const freeCamera = new BABYLON.FreeCamera("freeCam",
-        new BABYLON.Vector3(0, 1.6, -10), scene);
-      freeCamera.setTarget(new BABYLON.Vector3(0,1.6,0));
+
+      freeCamera = new BABYLON.FreeCamera("freeCam", new BABYLON.Vector3(0, 1.6, -10), scene);
+      freeCamera.setTarget(new BABYLON.Vector3(0, 1.6, 0));
       freeCamera.attachControl(canvas, true);
 
-      vrCamera = new BABYLON.VRDeviceOrientationFreeCamera("vrCam",
-        new BABYLON.Vector3(0, 1.6, -10), scene);
-      vrCamera.setTarget(new BABYLON.Vector3(0,1.6,0));
+      vrCamera = new BABYLON.VRDeviceOrientationFreeCamera("vrCam", new BABYLON.Vector3(0, 1.6, -10), scene);
+      vrCamera.setTarget(new BABYLON.Vector3(0, 1.6, 0));
 
-      const light = new BABYLON.HemisphericLight("light",
-        new BABYLON.Vector3(0,1,0), scene);
+      const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
       light.intensity = 0.7;
 
-      const sphere = BABYLON.MeshBuilder.CreateSphere("sphere",
-        {diameter:2,segments:32},scene);
-      sphere.position.y = 1;
+      BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 2 }, scene).position.y = 1;
+      BABYLON.MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, scene);
 
-      const mats = [
-        new BABYLON.StandardMaterial("red",scene),
-        new BABYLON.StandardMaterial("green",scene),
-        new BABYLON.StandardMaterial("blue",scene)
-      ];
-      mats[0].diffuseColor.set(1,0,0);
-      mats[1].diffuseColor.set(0,1,0);
-      mats[2].diffuseColor.set(0,0,1);
-
-      const plane1 = BABYLON.MeshBuilder.CreatePlane("plane1",{size:3,sideOrientation: BABYLON.Mesh.DOUBLESIDE},scene);
-      plane1.position.set(-3,0,0); plane1.material = mats[0];
-      const plane2 = BABYLON.MeshBuilder.CreatePlane("plane2",{size:3,sideOrientation: BABYLON.Mesh.DOUBLESIDE},scene);
-      plane2.position.set(3,0,-1.5); plane2.material = mats[1];
-      const plane3 = BABYLON.MeshBuilder.CreatePlane("plane3",{size:3,sideOrientation: BABYLON.Mesh.DOUBLESIDE},scene);
-      plane3.position.set(3,0,1.5); plane3.material = mats[2];
-
-      BABYLON.MeshBuilder.CreateGround("ground", {width:10, height:10}, scene);
       return scene;
-    }
+    };
 
-    createScene().then(s => {
-      scene = s;
-      engine.runRenderLoop(()=>scene.render());
-      window.addEventListener("resize", ()=>engine.resize());
+    enlargeButton.onclick = async function () {
+      if (BABYLON.Engine.IsIOS && !sensorPermissionGranted) {
+        try {
+          if (typeof DeviceOrientationEvent !== 'undefined' &&
+              typeof DeviceOrientationEvent.requestPermission === 'function') {
+            const permission = await DeviceOrientationEvent.requestPermission();
+            if (permission === 'granted') {
+              sensorPermissionGranted = true;
+            } else {
+              alert("Sensör izni reddedildi.");
+              return;
+            }
+          }
+        } catch (err) {
+          console.error("Sensör izni hatası:", err);
+          return;
+        }
+      }
+
+      if (!vrMode) {
+        await canvasParent.requestFullscreen();
+        freeCamera.detachControl(canvas);
+        vrCamera.attachControl(canvas, true);
+        scene.activeCamera = vrCamera;
+        vrMode = true;
+      } else {
+        await document.exitFullscreen();
+        vrCamera.detachControl(canvas);
+        freeCamera.attachControl(canvas, true);
+        scene.activeCamera = freeCamera;
+        vrMode = false;
+      }
+    };
+
+    document.addEventListener("fullscreenchange", () => {
+      vrMode = !!document.fullscreenElement;
+      enlargeButton.style.backgroundImage = vrMode
+        ? "url('https://cdn-icons-png.freepik.com/256/18672/18672116.png')"
+        : "url('https://cdn-icons-png.freepik.com/256/17460/17460854.png')";
     });
+
+    scene = createScene();
+    engine.runRenderLoop(() => scene.render());
+    window.addEventListener("resize", () => engine.resize());
   </script>
 </body>
 </html>
