@@ -119,36 +119,31 @@ var createScene = async function () {
 
 
 
-// Sabit buton boyutu fonksiyonu
-function keepButtonSizeFixed(button, size = 48) {
-    // Boyutları sabitle
-    button.style.width = `${size}px`;
-    button.style.height = `${size}px`;
-    
-    // Ekran değişikliklerini dinle
-    function checkSize() {
-        if (button.offsetWidth !== size || button.offsetHeight !== size) {
-            button.style.width = `${size}px`;
-            button.style.height = `${size}px`;
-        }
+async function adjustButtonSizeByOrientation() {
+    if (window.innerHeight > window.innerWidth) {
+        // Dikey mod
+        enlargeButton.style.width = '48px';
+        enlargeButton.style.height = '48px';
+    } else {
+        // Yatay mod
+        enlargeButton.style.width = '96px';
+        enlargeButton.style.height = '96px';
     }
-    
-    // Olay dinleyicileri
-    window.addEventListener('resize', () => {
-        setTimeout(checkSize, 100);
-    });
-    
-    window.addEventListener('orientationchange', () => {
-        setTimeout(checkSize, 100);
-    });
-    
-    // İlk yüklemede kontrol
-    checkSize();
 }
 
-// Kullanım örneği:
-const enlargeButton = document.querySelector('#enlargeButton'); 
-keepButtonSizeFixed(enlargeButton, 48); // 48x48 piksel sabit boyut
+// Bu yardımcı fonksiyon, güvenli bir şekilde yeniden çağırır
+function triggerAdjustButtonSize() {
+    // Bazı cihazlarda rotate sonrası boyutlar hemen güncellenmez
+    setTimeout(adjustButtonSizeByOrientation, 100); // 100ms gecikmeli çalıştır
+}
+
+// Olay dinleyicileri
+window.addEventListener("resize", triggerAdjustButtonSize);
+window.addEventListener("orientationchange", triggerAdjustButtonSize);
+window.addEventListener("load", adjustButtonSizeByOrientation);
+
+// İlk çalıştırma
+adjustButtonSizeByOrientation();
 	
 	
 
