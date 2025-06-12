@@ -107,7 +107,21 @@
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
-
+function adjustButtonSizeByOrientation() {
+    if (window.innerHeight > window.innerWidth) {
+        // Dikey mod
+        enlargeButton.style.width = '48px';
+        enlargeButton.style.height = '48px';
+    } else {
+        // Yatay mod
+        enlargeButton.style.width = '48px';
+        enlargeButton.style.height = '48px';
+    }
+}
+window.addEventListener("resize", adjustButtonSizeByOrientation);
+window.addEventListener("orientationchange", adjustButtonSizeByOrientation);
+adjustButtonSizeByOrientation(); // Sayfa yüklenince ilk ayar
+            
     let enlargeStatus = false;
     function toggleVRMode() {
         if (!enlargeStatus) {
