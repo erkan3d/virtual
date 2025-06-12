@@ -155,29 +155,24 @@ function adjustButtonSizeByOrientation() {
 }
 */	
 
+const DEFAULT_PHYSICAL_SIZE = 48;
 
-    function setButtonSizeInPhysicalPixels(physicalPx) {
-      const cssPx = physicalPx / window.devicePixelRatio;
-      enlargeButton.style.width = `${cssPx}px`;
-      enlargeButton.style.height = `${cssPx}px`;
-    }
-
-    // Başlangıçta varsayılan boyut (örneğin 48 fiziksel px)
-    setButtonSizeInPhysicalPixels(48);
-	
-// Bu yardımcı fonksiyon, güvenli bir şekilde yeniden çağırır
-function triggerAdjustButtonSize() {
-    // Bazı cihazlarda rotate sonrası boyutlar hemen güncellenmez
-    setTimeout(setButtonSizeInPhysicalPixels, 300); // 100ms gecikmeli çalıştır
+function setButtonSizeInPhysicalPixels(physicalPx) {
+  const cssPx = physicalPx / window.devicePixelRatio;
+  enlargeButton.style.width = `${cssPx}px`;
+  enlargeButton.style.height = `${cssPx}px`;
 }
 
-// Olay dinleyicileri
+function triggerAdjustButtonSize() {
+  setTimeout(() => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE), 300);
+}
+
 window.addEventListener("resize", triggerAdjustButtonSize);
 window.addEventListener("orientationchange", triggerAdjustButtonSize);
-window.addEventListener("load", adjustButtonSizeByOrientation);
+window.addEventListener("load", () => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE));
 
-// İlk çalıştırma
-setButtonSizeInPhysicalPixels();
+// İlk ayarlama
+setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE);
 
 	
     let enlargeStatus = false;
