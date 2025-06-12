@@ -154,7 +154,7 @@ function adjustButtonSizeByOrientation() {
     enlargeButton.style.height = `${size}px`;
 }
 	
-*/
+
 
 async function adjustButtonSizeByOrientation() {
     const ratio = window.innerHeight > window.innerWidth
@@ -176,7 +176,25 @@ window.addEventListener("load", () => setButtonSizeInPhysicalPixels(DEFAULT_PHYS
 
 // İlk ayarlama
 adjustButtonSizeByOrientation(DEFAULT_PHYSICAL_SIZE);
+*/
+const DEFAULT_PHYSICAL_SIZE = 48;
 
+function setButtonSizeInPhysicalPixels(physicalPx) {
+  const cssPx = physicalPx / window.devicePixelRatio;
+  enlargeButton.style.width = `${cssPx}px`;
+  enlargeButton.style.height = `${cssPx}px`;
+}
+
+function triggerAdjustButtonSize() {
+  setTimeout(() => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE), 300);
+}
+
+window.addEventListener("resize", triggerAdjustButtonSize);
+window.addEventListener("orientationchange", triggerAdjustButtonSize);
+window.addEventListener("load", () => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE));
+
+// İlk ayarlama
+setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE);
 
 
 
