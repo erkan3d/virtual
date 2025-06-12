@@ -215,8 +215,8 @@ async function handleFullscreenChange() {
         return;
       }
     }
-    //enlargeButton.style.width = '2vw';
-    //enlargeButton.style.height = '2vw';
+    enlargeButton.style.width = '2vw';
+    enlargeButton.style.height = '2vw';
     enlargeButton.style.filter = "invert(100%)"; //renkleri ters  çevir
     freeCamera.detachControl(canvas);
     vrCamera.attachControl(canvas, true);
