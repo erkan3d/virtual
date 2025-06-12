@@ -180,8 +180,8 @@ adjustButtonSizeByOrientation(DEFAULT_PHYSICAL_SIZE);
 */
 async function setButtonSizeInPhysicalPixels() {
     const ratio = window.innerHeight < window.innerWidth
-        ? window.innerHeight / window.innerWidth
-        : window.innerWidth / window.innerHeight;
+        ? window.innerWidth / window.innerHeight
+        : window.innerHeight / window.innerWidth;
     const size = ratio * 24;
     enlargeButton.style.width = `${size}px`;
     enlargeButton.style.height = `${size}px`;
