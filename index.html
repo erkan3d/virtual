@@ -1,102 +1,675 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <meta charset="utf-8" />
-    <title>BabylonJS VR Orientation iOS</title>
-    <script src="https://cdn.babylonjs.com/babylon.js"></script>
-</head>
-<body>
-    <canvas id="renderCanvas" style="width: 100%; height: 100%; touch-action: none;"></canvas>
-    <button id="startVR" style="position: absolute; top: 10px; left: 10px; z-index: 10;">Başlat</button>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <script>
-    const canvas = document.getElementById("renderCanvas");
-    const engine = new BABYLON.Engine(canvas, true);
+        <title>Babylon.js sample code</title>
 
-    let scene, vrCamera;
+        <!-- Babylon.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+        <script src="https://assets.babylonjs.com/generated/Assets.js"></script>
+        <script src="https://cdn.babylonjs.com/recast.js"></script>
+        <script src="https://cdn.babylonjs.com/ammo.js"></script>
+        <script src="https://cdn.babylonjs.com/havok/HavokPhysics_umd.js"></script>
+        <script src="https://cdn.babylonjs.com/cannon.js"></script>
+        <script src="https://cdn.babylonjs.com/Oimo.js"></script>
+        <script src="https://cdn.babylonjs.com/earcut.min.js"></script>
+        <script src="https://cdn.babylonjs.com/babylon.js"></script>
+        <script src="https://cdn.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+        <script src="https://cdn.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+        <script src="https://cdn.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+        <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+        <script src="https://cdn.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+        <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+        <script src="https://cdn.babylonjs.com/addons/babylonjs.addons.min.js"></script>
+        <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
 
-    // iOS için sensör izni iste
-    async function requestIOSPermissionIfNeeded() {
-        if (typeof DeviceOrientationEvent !== 'undefined' &&
-            typeof DeviceOrientationEvent.requestPermission === 'function') {
-            try {
-                const permissionState = await DeviceOrientationEvent.requestPermission();
-                if (permissionState === 'granted') {
-                    console.log("iOS sensör izni verildi");
-                    return true;
-                } else {
-                    alert("Sensör izni verilmedi");
-                    return false;
-                }
-            } catch (err) {
-                alert("Sensör izni alınırken hata oluştu: " + err);
-                return false;
+        <style>
+            html,
+            body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
             }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+
+            #canvasZone {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="canvasZone"><canvas id="renderCanvas"></canvas></div>
+        <script>
+                    var canvas = document.getElementById("renderCanvas");
+
+                    var startRenderLoop = function (engine, canvas) {
+                        engine.runRenderLoop(function () {
+                            if (sceneToRender && sceneToRender.activeCamera) {
+                                sceneToRender.render();
+                            }
+                        });
+                    }
+
+                    var engine = null;
+        var scene = null;
+        var sceneToRender = null;
+        var createDefaultEngine = async function() { 
+                    var engine = new BABYLON.WebGPUEngine(canvas);
+                    await engine.initAsync();
+                    return engine;
+                };
+        var createScene = async function () {
+    var scene = new BABYLON.Scene(engine);
+
+    var freeCamera = new BABYLON.FreeCamera("freeCam", new BABYLON.Vector3(0, 1.6, -10), scene);
+    freeCamera.setTarget(new BABYLON.Vector3(0, 1.6, 0));
+    freeCamera.attachControl(canvas, true);
+
+    var vrCamera = new BABYLON.VRDeviceOrientationFreeCamera("vrCam", new BABYLON.Vector3(0, 1.6, -10), scene);
+    vrCamera.setTarget(new BABYLON.Vector3(0, 1.6, 0));
+
+    const canvasParent = document.getElementById('canvasZone');
+    canvasParent.style.position = 'relative';
+
+    const hudLayer = document.createElement('div');
+    canvasParent.appendChild(hudLayer);
+
+    const enlargeButton = document.createElement('button');
+    hudLayer.appendChild(enlargeButton);
+    enlargeButton.style.position = 'absolute';
+    enlargeButton.style.right = '0px';
+    enlargeButton.style.bottom = '0px';
+    enlargeButton.style.width = '48px';
+    enlargeButton.style.height = '48px';
+    enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
+    enlargeButton.style.backgroundSize = 'contain';
+    enlargeButton.style.backgroundColor = 'transparent';
+    enlargeButton.style.border = 'none';
+    enlargeButton.style.cursor = 'pointer';
+    enlargeButton.style.pointerEvents = 'all';
+    enlargeButton.style.zIndex = '9999';
+    enlargeButton.style.transform = 'translateZ(0)';
+
+    enlargeButton.onclick = async function () {
+        toggleVRMode();
+    };
+
+    let enlargeStatus = false;
+    function toggleVRMode() {
+        if (!enlargeStatus) {
+            canvasParent.requestFullscreen();
+            enlargeStatus = true;
         } else {
-            // Android, masaüstü gibi
-            return true;
+            document.exitFullscreen();
+            enlargeStatus = false;
         }
     }
 
-    // Sahne oluştur
-    async function createScene() {
-        scene = new BABYLON.Scene(engine);
+// Cardboard şeridi (orta alan, başta pasif)
+const cardboardStrip = document.createElement('div');
+canvasParent.appendChild(cardboardStrip);
+cardboardStrip.style.position = 'absolute';
+cardboardStrip.style.top = '0px';
+cardboardStrip.style.left = '40%';
+cardboardStrip.style.width = '20%';
+cardboardStrip.style.height = '100%';
+cardboardStrip.style.pointerEvents = 'none';
+cardboardStrip.style.zIndex = '9';
 
-        // Kamera
-        vrCamera = new BABYLON.VRDeviceOrientationFreeCamera("vrCam", new BABYLON.Vector3(0, 1.6, -10), scene);
-        vrCamera.setTarget(new BABYLON.Vector3(0, 1.6, 0));
-        vrCamera.attachControl(canvas, true);
-        scene.activeCamera = vrCamera;
+let lastButtonPressTime = 0;
+let activeCardboardPointerId = null;
 
-        // Işık
-        const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
-        light.intensity = 0.7;
+cardboardStrip.addEventListener("pointerdown", (event) => {
+    const now = Date.now();
+    if (now - lastButtonPressTime < 300) return;
+    lastButtonPressTime = now;
 
-        // Objeler
-        const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 2 }, scene);
-        sphere.position.y = 1;
+    activeCardboardPointerId = event.pointerId;
 
-        const redMat = new BABYLON.StandardMaterial("red", scene);
-        redMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
-        redMat.emissiveColor = new BABYLON.Color3(1, 0, 0);
+    handleMovementInput();
+    movementState.forward = true;
+});
 
-        const greenMat = new BABYLON.StandardMaterial("green", scene);
-        greenMat.diffuseColor = new BABYLON.Color3(0, 1, 0);
+cardboardStrip.addEventListener("pointerup", (event) => {
+    if (event.pointerId === activeCardboardPointerId) {
+        movementState.forward = false;
+        activeCardboardPointerId = null;
+    }
+});
 
-        const blueMat = new BABYLON.StandardMaterial("blue", scene);
-        blueMat.diffuseColor = new BABYLON.Color3(0, 0, 1);
+// tam ekerana geçiş ve IOS sensor kullanımı için kullanıcı izni
+var usingVR = false;
+var sensorPermissionGranted = false;
+async function handleFullscreenChange() {
+  const isFullscreen = !!document.fullscreenElement || !!document.webkitFullscreenElement;
+  enlargeStatus = isFullscreen;
 
-        const plane1 = BABYLON.Mesh.CreatePlane("plane1", 3, scene, true, BABYLON.Mesh.DOUBLESIDE);
-        plane1.position.x = -3;
-        plane1.position.z = 0;
-        plane1.material = redMat;
+  cardboardStrip.style.pointerEvents = isFullscreen ? 'all' : 'none';
+  enlargeButton.style.backgroundImage = isFullscreen
+    ? "url('https://cdn-icons-png.freepik.com/256/18672/18672116.png')"  // küçültme ikonu
+    : "url('https://cdn-icons-png.freepik.com/256/17460/17460854.png')";  // büyütme ikonu
 
-        const plane2 = BABYLON.Mesh.CreatePlane("plane2", 3, scene, true, BABYLON.Mesh.DOUBLESIDE);
-        plane2.position.x = 3;
-        plane2.position.z = -1.5;
-        plane2.material = greenMat;
+  if (isFullscreen) {
+    if (BABYLON.Engine.IsIOS && !sensorPermissionGranted) {
+      try {
+        const permission = await DeviceOrientationEvent.requestPermission();
+        if (permission === 'granted') {
+          sensorPermissionGranted = true;
+        } else {
+          alert("Sensor permission required for VR experience.");
+          return;
+        }
+      } catch (error) {
+        console.error("iOS sensör izni hatası:", error);
+        return;
+      }
+    }
+    enlargeButton.style.width = '32px';
+    enlargeButton.style.height = '32px';
+    enlargeButton.style.filter = "invert(100%)"; //renkleri ters  çevir
+    freeCamera.detachControl(canvas);
+    vrCamera.attachControl(canvas, true);
+    scene.activeCamera = vrCamera;
+    usingVR = true;
+    clearPreviousMeasurement();
 
-        const plane3 = BABYLON.Mesh.CreatePlane("plane3", 3, scene, true, BABYLON.Mesh.DOUBLESIDE);
-        plane3.position.x = 3;
-        plane3.position.z = 1.5;
-        plane3.material = blueMat;
+  } else {
+    enlargeButton.style.width = '48px';
+    enlargeButton.style.height = '48px';
+    enlargeButton.style.filter = "invert(0%)";
+    vrCamera.detachControl(canvas);
+    freeCamera.attachControl(canvas, true);
+    scene.activeCamera = freeCamera;
+    usingVR = false;
+  }
+}
+document.addEventListener("fullscreenchange", handleFullscreenChange);
+document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
 
-        const ground = BABYLON.Mesh.CreateGround("ground1", 10, 10, 2, scene);
 
-        return scene;
+    // Yürüme kontrolü
+    let speedLevel = 0;
+    let walkSpeed = 0;
+    let lastTapTime = 0;
+    let movementState = {
+        forward: false,
+        backward: false,
+        left: false,
+        right: false,
+        up: false,
+        down: false
+    };
+
+    freeCamera.keysUp = [];
+    freeCamera.keysDown = [];
+    freeCamera.keysLeft = [];
+    freeCamera.keysRight = [];
+    freeCamera.keysUpward = [];
+    freeCamera.keysDownward = [];
+
+    vrCamera.keysUp = [];
+    vrCamera.keysDown = [];
+    vrCamera.keysLeft = [];
+    vrCamera.keysRight = [];
+    vrCamera.keysUpward = [];
+    vrCamera.keysDownward = [];
+
+
+// Sağ üst köşe kontrolü
+let activePointerId = null;
+
+// touchArea (sağ üst köşe dokunma alanı)
+const touchArea = document.createElement('div');
+touchArea.id = 'touchArea';
+touchArea.style.position = 'absolute';  // fixed => absolute (fullscreen içinde)
+touchArea.style.top = '0';
+touchArea.style.right = '0';
+touchArea.style.width = '25%';  
+touchArea.style.height = '25%'; 
+touchArea.style.zIndex = '1002'; 
+touchArea.style.background = 'transparent';
+touchArea.style.touchAction = 'none';
+canvasParent.appendChild(touchArea);
+
+touchArea.addEventListener("pointerdown", (evt) => {
+    activePointerId = evt.pointerId;
+    handleMovementInput();
+    movementState.forward = true;
+});
+
+window.addEventListener("pointerup", (evt) => {
+    if (evt.pointerId === activePointerId) {
+        movementState.forward = false;
+        activePointerId = null;
+    }
+});
+
+window.addEventListener("pointercancel", (evt) => {
+    if (evt.pointerId === activePointerId) {
+        movementState.forward = false;
+        activePointerId = null;
+    }
+});
+
+
+    window.addEventListener("keydown", (e) => {
+        if (e.repeat) return;
+        switch (e.key.toLowerCase()) {
+            case 'w':
+            case 'arrowup':
+                handleMovementInput();
+                movementState.forward = true;
+                break;
+            case 's':
+            case 'arrowdown':
+                handleMovementInput();
+                movementState.backward = true;
+                break;
+            case 'a':
+            case 'arrowleft':
+                handleMovementInput();
+                movementState.left = true;
+                break;
+            case 'd':
+            case 'arrowright':
+                handleMovementInput();
+                movementState.right = true;
+                break;
+            case 'q':
+            case 'pageup':
+                handleMovementInput();
+                movementState.up = true;
+                break;
+            case 'c':
+            case 'pagedown':
+                handleMovementInput();
+                movementState.down = true;
+                break;
+        }
+    });
+
+    window.addEventListener("keyup", (e) => {
+        switch (e.key.toLowerCase()) {
+            case 'w':
+            case 'arrowup':
+                movementState.forward = false;
+                break;
+            case 's':
+            case 'arrowdown':
+                movementState.backward = false;
+                break;
+            case 'a':
+            case 'arrowleft':
+                movementState.left = false;
+                break;
+            case 'd':
+            case 'arrowright':
+                movementState.right = false;
+                break;
+            case 'q':
+            case 'pageup':
+                movementState.up = false;
+                break;
+            case 'c':
+            case 'pagedown':
+                movementState.down = false;
+                break;
+        }
+    });
+// mesuro Kamera hareket kontrolü
+let lastCameraPosition = freeCamera.position.clone();
+let lastCameraRotation = freeCamera.rotation ? freeCamera.rotation.clone() : new BABYLON.Vector3.Zero();
+let cameraIsMoving = false;
+
+    scene.onBeforeRenderObservable.add(() => {
+        const activeCam = scene.activeCamera;
+        let movement = BABYLON.Vector3.Zero();
+
+        if (movementState.forward) {
+            movement.addInPlace(activeCam.getDirection(BABYLON.Axis.Z).scale(walkSpeed));
+        }
+        if (movementState.backward) {
+            movement.addInPlace(activeCam.getDirection(BABYLON.Axis.Z).scale(-walkSpeed));
+        }
+        if (movementState.left) {
+            movement.addInPlace(activeCam.getDirection(BABYLON.Axis.X).scale(-walkSpeed));
+        }
+        if (movementState.right) {
+            movement.addInPlace(activeCam.getDirection(BABYLON.Axis.X).scale(walkSpeed));
+        }
+        if (movementState.up) {
+            movement.addInPlace(activeCam.getDirection(BABYLON.Axis.Y).scale(walkSpeed));
+        }
+        if (movementState.down) {
+            movement.addInPlace(activeCam.getDirection(BABYLON.Axis.Y).scale(-walkSpeed));
+        }
+        
+        activeCam.position.addInPlace(movement);
+        // mesuro Kamera hareket kontrolü
+        const posChanged = !freeCamera.position.equalsWithEpsilon(lastCameraPosition, 0.001);
+        const rotChanged = freeCamera.rotation && !freeCamera.rotation.equalsWithEpsilon(lastCameraRotation, 0.001);
+        cameraIsMoving = posChanged || rotChanged;
+        lastCameraPosition.copyFrom(freeCamera.position);
+        if (freeCamera.rotation) lastCameraRotation.copyFrom(activeCam.rotation);
+
+    });
+
+    function handleMovementInput() {
+        const now = Date.now();
+        const timeSinceLastTap = now - lastTapTime;
+
+        if (speedLevel === 0) {
+            speedLevel = 1;
+            walkSpeed = 0.015;
+        } else if (speedLevel === 1 && timeSinceLastTap < 300) {
+            speedLevel = 2;
+            walkSpeed = 0.06;
+        } else if (speedLevel === 2 && timeSinceLastTap < 300) {
+            speedLevel = 3;
+            walkSpeed = 0.2;
+        } else {
+            speedLevel = 1;
+            walkSpeed = 0.015;
+        }
+
+        lastTapTime = now;
+        console.log(`Hız seviyesi: ${speedLevel}, Hız: ${walkSpeed}`);
     }
 
-    document.getElementById("startVR").onclick = async () => {
-        const permissionGranted = await requestIOSPermissionIfNeeded();
-        if (!permissionGranted) return;
 
-        await createScene();
-        engine.runRenderLoop(() => {
-            if (scene) scene.render();
+// === Mezuro ölçüm değişkenleri ===
+let measurePoints = [];
+let activeMeasure = {
+    line: null,
+    label: null,
+    dummy: null,
+    pointMarkers: []
+};
+
+// === GUI UI oluştur ===
+const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+// Pointer hareketi kontrolü
+let pointerDownPos = null;
+scene.onPointerDown = (evt, pickResult) => {
+    if (scene.activeCamera !== freeCamera) return;
+    pointerDownPos = { x: evt.clientX, y: evt.clientY };
+};
+let activeGuiLine = { line: null, dummyA: null, dummyB: null };
+
+scene.onPointerUp = (evt, pickResult) => {
+    if (scene.activeCamera !== freeCamera) return;
+    if (!pointerDownPos || !pickResult.hit) return;
+
+    const dx = evt.clientX - pointerDownPos.x;
+    const dy = evt.clientY - pointerDownPos.y;
+    const moved = Math.sqrt(dx * dx + dy * dy);
+    if (moved > 5 || cameraIsMoving) return;
+
+    const pickedPoint = pickResult.pickedPoint.clone();
+    
+    // Yeni ölçümün ilk noktası konduğunda eski ölçümü temizle
+    if (measurePoints.length === 0) {
+        clearPreviousMeasurement();
+    }
+    
+    measurePoints.push(pickedPoint);
+
+    // İlk noktaya dokunur dokunmaz ekranda göster
+    if (measurePoints.length === 1) {
+        // İlk nokta için GUI daire oluştur
+        const markerDummy = BABYLON.MeshBuilder.CreateBox("markerDummy", { size: 0.001 }, scene);
+        markerDummy.position.copyFrom(pickedPoint);
+        markerDummy.isVisible = false;
+        markerDummy.isPickable = false;
+
+        const dot = new BABYLON.GUI.Ellipse();
+        dot.width = "8px";
+        dot.height = "8px";
+        dot.color = "white";
+        dot.thickness = 0;
+        dot.background = "white";
+        dot.isPointerBlocker = false;
+
+        advancedTexture.addControl(dot);
+        dot.linkWithMesh(markerDummy);
+
+        activeMeasure.pointMarkers.push({ gui: dot, dummy: markerDummy });
+    }
+
+    if (measurePoints.length === 2) {
+        const [pointA, pointB] = measurePoints;
+
+        // Yeni 3D çizgi
+        const line = BABYLON.MeshBuilder.CreateLines("measureLine", { points: [pointA, pointB] }, scene);
+        activeMeasure.line = line;
+
+        // Yeni GUI çizgi (kesik)
+        activeGuiLine = createAlwaysVisibleLine(pointA, pointB);
+
+        // Mesafe hesapla
+        const distanceMeters = BABYLON.Vector3.Distance(pointA, pointB);
+        const distanceFormatted = formatFeetInches(distanceMeters);
+
+        // İkinci nokta için GUI daire ekle
+        const markerDummy = BABYLON.MeshBuilder.CreateBox("markerDummy", { size: 0.001 }, scene);
+        markerDummy.position.copyFrom(pointB);
+        markerDummy.isVisible = false;
+        markerDummy.isPickable = false;
+
+        const dot = new BABYLON.GUI.Ellipse();
+        dot.width = "8px";
+        dot.height = "8px";
+        dot.color = "white";
+        dot.thickness = 0;
+        dot.background = "white";
+        dot.isPointerBlocker = false;
+
+        advancedTexture.addControl(dot);
+        dot.linkWithMesh(markerDummy);
+
+        activeMeasure.pointMarkers.push({ gui: dot, dummy: markerDummy });
+
+        // Etiket oluştur
+        const label = new BABYLON.GUI.Rectangle();
+        label.width = "120px";
+        label.height = "40px";
+        label.cornerRadius = 5;
+        label.color = "white";
+        label.thickness = 1;
+        label.background = "black";
+        label.isPointerBlocker = true;
+
+        const text = new BABYLON.GUI.TextBlock();
+        text.text = distanceFormatted;
+        text.color = "white";
+        text.fontSize = 18;
+        label.addControl(text);
+
+        // Etikete tıklanınca her şeyi temizle
+        label.onPointerUpObservable.add(() => {
+            clearPreviousMeasurement();
+            measurePoints = [];
         });
 
-        window.addEventListener("resize", () => engine.resize());
-    };
-    </script>
-</body>
+        advancedTexture.addControl(label);
+        activeMeasure.label = label;
+
+        // Etiketi ikinci noktaya yerleştir
+        const dummy = BABYLON.MeshBuilder.CreateBox("dummy", { size: 0.001 }, scene);
+        dummy.position = pointB;
+        dummy.isVisible = false;
+        dummy.isPickable = false;
+        activeMeasure.dummy = dummy;
+        label.linkWithMesh(dummy);
+        label.linkOffsetY = -30;
+
+        // Hazır
+        measurePoints = [];
+    }
+};
+
+function clearPreviousMeasurement() {
+    if (activeMeasure.line) activeMeasure.line.dispose();
+    if (activeMeasure.label) {
+        advancedTexture.removeControl(activeMeasure.label);
+        activeMeasure.label.dispose();
+    }
+    if (activeMeasure.dummy) activeMeasure.dummy.dispose();
+    activeMeasure.pointMarkers.forEach(p => {
+        advancedTexture.removeControl(p.gui);
+        p.dummy.dispose();
+    });
+    if (activeGuiLine.line) {
+        advancedTexture.removeControl(activeGuiLine.line);
+        activeGuiLine.line.dispose();
+        activeGuiLine.dummyA.dispose();
+        activeGuiLine.dummyB.dispose();
+    }
+    activeMeasure.pointMarkers = [];
+    activeMeasure.line = null;
+    activeMeasure.label = null;
+    activeMeasure.dummy = null;
+    activeGuiLine = { line: null, dummyA: null, dummyB: null };
+}
+
+function metersToFeetInches(meters) {
+    const totalFeet = meters / 0.3048;
+    const feet = Math.floor(totalFeet);
+    const inches = Math.round((totalFeet - feet) * 12);
+    return { feet, inches };
+}
+
+function formatFeetInches(meters) {
+    const { feet, inches } = metersToFeetInches(meters);
+    return `${feet}' ${inches}"`;
+}
+
+function createAlwaysVisibleLine(pointA, pointB) {
+    const dummyA = BABYLON.MeshBuilder.CreateBox("guiPointA", { size: 0.001 }, scene);
+    const dummyB = BABYLON.MeshBuilder.CreateBox("guiPointB", { size: 0.001 }, scene);
+    dummyA.position.copyFrom(pointA);
+    dummyB.position.copyFrom(pointB);
+    dummyA.isVisible = dummyB.isVisible = false;
+    dummyA.isPickable = dummyB.isPickable = false;
+
+    const line = new BABYLON.GUI.Line();
+    line.lineWidth = 1;
+    line.color = "white";
+    line.alpha = 0.6;
+    line.dash = [4, 4];
+    advancedTexture.addControl(line);
+
+    // Dummy başlangıç noktasına bağla
+    line.linkWithMesh(dummyA);
+
+    // Görünmez bir GUI kontrolü oluştur ve GUI'ye ekle
+    const invisibleTarget = new BABYLON.GUI.Rectangle();
+    invisibleTarget.width = "1px";
+    invisibleTarget.height = "1px";
+    invisibleTarget.thickness = 0;
+    invisibleTarget.background = "transparent";
+    invisibleTarget.isPointerBlocker = false;
+    advancedTexture.addControl(invisibleTarget);
+
+    // Dummy bitiş noktasına bağla
+    invisibleTarget.linkWithMesh(dummyB);
+    line.connectedControl = invisibleTarget;
+
+    return { line, dummyA, dummyB };
+}
+
+// Ekran dönerse GUI güncellenir
+function updateLabelPosition() {
+    advancedTexture.scaleTo(window.innerWidth, window.innerHeight);
+}
+window.addEventListener("resize", updateLabelPosition);
+window.addEventListener("orientationchange", () => setTimeout(updateLabelPosition, 300));
+
+
+
+    //3d modeller
+    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+
+    // Default intensity is 1. Let's dim the light a small amount
+    light.intensity = 0.7;
+
+    // Our built-in 'sphere' shape.
+    var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 32}, scene);
+    sphere.position.y = 1;
+
+    var redMat = new BABYLON.StandardMaterial("red", scene);
+    redMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
+    redMat.emissiveColor = new BABYLON.Color3(1, 0, 0);
+    redMat.specularColor = new BABYLON.Color3(1, 0, 0);
+
+    var greenMat = new BABYLON.StandardMaterial("green", scene);
+    greenMat.diffuseColor = new BABYLON.Color3(0, 1, 0);
+    greenMat.specularColor = new BABYLON.Color3(0, 1, 0);
+
+    var blueMat = new BABYLON.StandardMaterial("blue", scene);
+    blueMat.diffuseColor = new BABYLON.Color3(0, 0, 1);
+    blueMat.specularColor = new BABYLON.Color3(0, 0, 1);
+
+    var plane1 = new BABYLON.Mesh.CreatePlane("plane1", 3, scene, true, BABYLON.Mesh.DOUBLESIDE);
+    plane1.position.x = -3;
+    plane1.position.z = 0;
+    plane1.material = redMat;
+
+    var plane2 = new BABYLON.Mesh.CreatePlane("plane2", 3, scene, true, BABYLON.Mesh.DOUBLESIDE);
+    plane2.position.x = 3;
+    plane2.position.z = -1.5;
+    plane2.material = greenMat;
+
+    var plane3 = new BABYLON.Mesh.CreatePlane("plane3", 3, scene, true, BABYLON.Mesh.DOUBLESIDE);
+    plane3.position.x = 3;
+    plane3.position.z = 1.5;
+    plane3.material = blueMat;
+
+    var ground = BABYLON.Mesh.CreateGround("ground1", 10, 10, 2, scene);
+
+    return scene;
+};
+                window.initFunction = async function() {
+                    
+                    
+                    
+                    var asyncEngineCreation = async function() {
+                        try {
+                        return createDefaultEngine();
+                        } catch(e) {
+                        console.log("the available createEngine function failed. Creating the default engine instead");
+                        return createDefaultEngine();
+                        }
+                    }
+
+                    window.engine = await asyncEngineCreation();
+                    
+                    const engineOptions = window.engine.getCreationOptions?.();
+                    if (!engineOptions || engineOptions.audioEngine !== false) {
+                        
+                    }
+        if (!engine) throw 'engine should not be null.';
+        startRenderLoop(engine, canvas);
+        window.scene = createScene();};
+        initFunction().then(() => {scene.then(returnedScene => { sceneToRender = returnedScene; });
+        
+                    });
+
+                    // Resize
+                    window.addEventListener("resize", function () {
+                        engine.resize();
+                    });
+        </script>
+    </body>
 </html>
