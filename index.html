@@ -116,28 +116,32 @@ var createScene = async function () {
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
-async function adjustButtonSizeByOrientation() {
-    const size =  window.innerWidth/window.height*512;
-
-        enlargeButton.style.width = '${size}px';
-        enlargeButton.style.height = '${size}px';
-
+// CSS sınıfı ekleyerek daha güçlü kontrol
+function lockButtonSize(button, size = 48) {
+    const styleId = 'fixed-button-style';
+    
+    // Eğer stil daha önce eklenmediyse ekle
+    if (!document.getElementById(styleId)) {
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+            .fixed-button-size {
+                width: ${size}px !important;
+                height: ${size}px !important;
+                min-width: ${size}px !important;
+                min-height: ${size}px !important;
+            }
+        `;
+        document.head.appendChild(style);
     }
+    
+    // Sınıfı butona ekle
+    button.classList.add('fixed-button-size');
 }
 
-// Bu yardımcı fonksiyon, güvenli bir şekilde yeniden çağırır
-function triggerAdjustButtonSize() {
-    // Bazı cihazlarda rotate sonrası boyutlar hemen güncellenmez
-    setTimeout(adjustButtonSizeByOrientation, 500); // 100ms gecikmeli çalıştır
-}
+// Kullanım:
+lockButtonSize(enlargeButton, 48);
 
-// Olay dinleyicileri
-window.addEventListener("resize", triggerAdjustButtonSize);
-window.addEventListener("orientationchange", triggerAdjustButtonSize);
-window.addEventListener("load", adjustButtonSizeByOrientation);
-
-// İlk çalıştırma
-adjustButtonSizeByOrientation();
     let enlargeStatus = false;
     function toggleVRMode() {
         if (!enlargeStatus) {
