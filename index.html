@@ -120,7 +120,7 @@ var createScene = async function () {
     };
     
 async function adjustButtonSizeByOrientation() {
-	const size = Math.ceil(window.innerHeight / window.innerWidth * 48);
+	const size = Math.ceil(window.innerWidth / window.innerHeight* 48);
 	        enlargeButton.style.width = `${size}px`;
         enlargeButton.style.height = `${size}px`;
 	/*
