@@ -122,7 +122,7 @@ var createScene = async function () {
 async function adjustButtonSizeByOrientation() {
     if (window.innerHeight < window.innerWidth) {
         // Dikey mod
-	  cons size = window.innerHeight / window.innerWidth * 48
+	  cons size = window.innerWidth / window.innerHeight * 48
         enlargeButton.style.width = `${size}px`;
         enlargeButton.style.height = `${size}px`;
     } else {
