@@ -154,16 +154,21 @@ function adjustButtonSizeByOrientation() {
     enlargeButton.style.height = `${size}px`;
 }
 */	
+
+
     function setButtonSizeInPhysicalPixels(physicalPx) {
       const cssPx = physicalPx / window.devicePixelRatio;
-      enlargeButton.style.width = `${cssPx/100}px`;
-      enlargeButton.style.height = `${cssPx/100}px`;
+      enlargeButton.style.width = `${cssPx}px`;
+      enlargeButton.style.height = `${cssPx}px`;
     }
+
+    // Başlangıçta varsayılan boyut (örneğin 48 fiziksel px)
+    setButtonSizeInPhysicalPixels(48);
 	
 // Bu yardımcı fonksiyon, güvenli bir şekilde yeniden çağırır
 function triggerAdjustButtonSize() {
     // Bazı cihazlarda rotate sonrası boyutlar hemen güncellenmez
-    setTimeout(adjustButtonSizeByOrientation, 300); // 100ms gecikmeli çalıştır
+    setTimeout(setButtonSizeInPhysicalPixels, 300); // 100ms gecikmeli çalıştır
 }
 
 // Olay dinleyicileri
@@ -174,6 +179,7 @@ window.addEventListener("load", adjustButtonSizeByOrientation);
 // İlk çalıştırma
 adjustButtonSizeByOrientation();
 
+	
     let enlargeStatus = false;
     function toggleVRMode() {
         if (!enlargeStatus) {
