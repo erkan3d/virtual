@@ -102,8 +102,8 @@ var createScene = async function () {
     enlargeButton.style.position = 'absolute';
     enlargeButton.style.right = '0px';
     enlargeButton.style.bottom = '0px';
-    enlargeButton.style.width = '3vw';
-    enlargeButton.style.height = '3vw';
+    //enlargeButton.style.width = '3vw';
+    //enlargeButton.style.height = '3vw';
     enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
     enlargeButton.style.backgroundSize = 'contain';
     enlargeButton.style.backgroundColor = 'transparent';
@@ -117,7 +117,7 @@ var createScene = async function () {
         toggleVRMode();
     };
 async function adjustButtonSizeByOrientation() {
-    const size =  window.innerHeight / window.innerWidth * 48;
+    const size =  window.innerWidth / window.innerHeight * 48;
     if (window.innerHeight > window.innerWidth) {
         // Dikey mod
         enlargeButton.style.width = '${size}px';
@@ -212,8 +212,8 @@ async function handleFullscreenChange() {
         return;
       }
     }
-    enlargeButton.style.width = '2vw';
-    enlargeButton.style.height = '2vw';
+    //enlargeButton.style.width = '2vw';
+    //enlargeButton.style.height = '2vw';
     enlargeButton.style.filter = "invert(100%)"; //renkleri ters  çevir
     freeCamera.detachControl(canvas);
     vrCamera.attachControl(canvas, true);
@@ -222,8 +222,8 @@ async function handleFullscreenChange() {
     clearPreviousMeasurement();
 
   } else {
-    enlargeButton.style.width = '3vw';
-    enlargeButton.style.height = '3vw';
+    //enlargeButton.style.width = '3vw';
+    //enlargeButton.style.height = '3vw';
     enlargeButton.style.filter = "invert(0%)";
     vrCamera.detachControl(canvas);
     freeCamera.attachControl(canvas, true);
