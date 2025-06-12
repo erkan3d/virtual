@@ -238,9 +238,9 @@ async function handleFullscreenChange() {
         return;
       }
     }
-	  window.addEventListener("resize", triggerAdjustButtonSize);
-    //enlargeButton.style.width = '32px';
-    //enlargeButton.style.height = '32px';
+	  //window.addEventListener("resize", triggerAdjustButtonSize);
+    enlargeButton.style.width = '${enlargeButton.style.width/3}px';
+    enlargeButton.style.height = '${enlargeButton.style.width/3}px';
     enlargeButton.style.filter = "invert(100%)"; //renkleri ters  çevir
     freeCamera.detachControl(canvas);
     vrCamera.attachControl(canvas, true);
