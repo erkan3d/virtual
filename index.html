@@ -116,89 +116,11 @@ var createScene = async function () {
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
-/*
-async function adjustButtonSizeByOrientation() {
-    const ratio = window.innerHeight > window.innerWidth
-        ? window.innerHeight / window.innerWidth
-        : window.innerWidth / window.innerHeight;
-    const size = ratio * 256;
-	
-    if (window.innerHeight > window.innerWidth) {
-        // Dikey mod
-	//const size = Math.round(window.innerWidth / 32);
-        enlargeButton.style.width = `256px`;
-        enlargeButton.style.height = `256px`;
-    } else {
-        // Yatay mod
-	const size = Math.round(window.innerHeight / 32);
-        enlargeButton.style.width = `${size}px`;
-        enlargeButton.style.height = `${size}px`;
-    }
-}
-
-
-async function adjustButtonSizeByOrientation() {
-    const size = Math.round(window.innerWidth / 22);
-
-    enlargeButton.style.width = `${size}px`;   // <-- backtick (`) ile yazıldı
-    enlargeButton.style.height = `${size}px`;
-}
-
-
-function adjustButtonSizeByOrientation() {
-    const ratio = window.innerHeight > window.innerWidth
-        ? window.innerHeight / window.innerWidth
-        : window.innerWidth / window.innerHeight;
-    const size = ratio * 2048;
-    enlargeButton.style.width = `${size}px`;
-    enlargeButton.style.height = `${size}px`;
-}
-	
-
-
-async function adjustButtonSizeByOrientation() {
-    const ratio = window.innerHeight > window.innerWidth
-        ? window.innerHeight / window.innerWidth
-        : window.innerWidth / window.innerHeight;
-    const size = ratio * 512;
-    enlargeButton.style.width = `${size}px`;
-    enlargeButton.style.height = `${size}px`;
-}
-
-	
-function triggerAdjustButtonSize() {
-  setTimeout(() => adjustButtonSizeByOrientation(DEFAULT_PHYSICAL_SIZE), 300);
-}
-
-window.addEventListener("resize", triggerAdjustButtonSize);
-window.addEventListener("orientationchange", triggerAdjustButtonSize);
-window.addEventListener("load", () => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE));
-
-// İlk ayarlama
-adjustButtonSizeByOrientation(DEFAULT_PHYSICAL_SIZE);
-*/
-const DEFAULT_PHYSICAL_SIZE = 48;
-
-function setButtonSizeInPhysicalPixels(physicalPx) {
-  const cssPx = physicalPx / window.devicePixelRatio;
-  enlargeButton.style.width = `${cssPx}px`;
-  enlargeButton.style.height = `${cssPx}px`;
-}
-
-function triggerAdjustButtonSize() {
-  setTimeout(() => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE), 300);
-}
-
-window.addEventListener("resize", triggerAdjustButtonSize);
-window.addEventListener("orientationchange", triggerAdjustButtonSize);
-window.addEventListener("load", () => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE));
-
-// İlk ayarlama
-setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE);
 
 
 
-// 6. VR geçiş fonksiyonu örnek
+
+
     let enlargeStatus = false;
     function toggleVRMode() {
         if (!enlargeStatus) {
