@@ -120,8 +120,8 @@ var createScene = async function () {
 async function adjustButtonSizeByOrientation() {
     if (window.innerHeight > window.innerWidth) {
         // Dikey mod
-        enlargeButton.style.width = '196px';
-        enlargeButton.style.height = '196px';
+        enlargeButton.style.width = '96px';
+        enlargeButton.style.height = '96px';
     } else {
         // Yatay mod
         enlargeButton.style.width = '48px';
@@ -215,8 +215,8 @@ async function handleFullscreenChange() {
         return;
       }
     }
-    enlargeButton.style.width = '2vw';
-    enlargeButton.style.height = '2vw';
+    enlargeButton.style.width = '32px';
+    enlargeButton.style.height = '32px';
     enlargeButton.style.filter = "invert(100%)"; //renkleri ters  çevir
     freeCamera.detachControl(canvas);
     vrCamera.attachControl(canvas, true);
