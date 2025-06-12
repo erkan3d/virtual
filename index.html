@@ -120,6 +120,7 @@ var createScene = async function () {
     };
     
 async function adjustButtonSizeByOrientation() {
+	
     if (window.innerHeight < window.innerWidth) {
         // Dikey mod
 	  const size = Math.ceil(window.innerHeight / window.innerWidth * 48);
@@ -128,8 +129,9 @@ async function adjustButtonSizeByOrientation() {
         enlargeButton.style.height = `${size}px`;
     } else {
         // Yatay mod
-        enlargeButton.style.width = '48px';
-        enlargeButton.style.height = '48px';
+	const size = Math.ceil(window.innerHeight / window.innerWidth * 48);
+        enlargeButton.style.width = `${size}px`; // <-- backtick (`) ile yazıldı
+        enlargeButton.style.height = `${size}px`;
     }
 }
 
