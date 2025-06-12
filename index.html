@@ -155,9 +155,9 @@ function adjustButtonSizeByOrientation() {
 }
 */	
     function setButtonSizeInPhysicalPixels(physicalPx) {
-      const cssPx = physicalPx / window.devicePixelRatio / 100;
-      enlargeButton.style.width = `${cssPx}px`;
-      enlargeButton.style.height = `${cssPx}px`;
+      const cssPx = physicalPx / window.devicePixelRatio;
+      enlargeButton.style.width/100 = `${cssPx}px`;
+      enlargeButton.style.height/100 = `${cssPx}px`;
     }
 	
 // Bu yardımcı fonksiyon, güvenli bir şekilde yeniden çağırır
