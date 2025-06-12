@@ -238,11 +238,10 @@ async function handleFullscreenChange() {
         return;
       }
     }
-const rawSize = parseFloat(enlargeButton.style.width); // "48px" → 48
-const btnsize = rawSize / 3;
-
-enlargeButton.style.width = `${btnsize}px`;
-enlargeButton.style.height = `${btnsize}px`;
+        const rawSize = parseFloat(enlargeButton.style.width);
+        const newSize = rawSize / 3;
+        enlargeButton.style.width = `${newSize}px`;
+        enlargeButton.style.height = `${newSize}px`;
     enlargeButton.style.filter = "invert(100%)"; //renkleri ters  çevir
     freeCamera.detachControl(canvas);
     vrCamera.attachControl(canvas, true);
