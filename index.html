@@ -62,12 +62,31 @@
                     var engine = null;
         var scene = null;
         var sceneToRender = null;
+            /*
         var createDefaultEngine = async function() { 
                     var engine = new BABYLON.WebGPUEngine(canvas);
                     await engine.initAsync();
                     return engine;
                 };
+*/
+var createDefaultEngine = async function () {
+    if (BABYLON.WebGPUEngine && BABYLON.WebGPUEngine.IsSupported) {
+        try {
+            const webgpu = new BABYLON.WebGPUEngine(canvas);
+            await webgpu.initAsync();
+            return webgpu;
+        } catch (e) {
+            console.warn("WebGPU başlatılamadı, WebGL'e geçiliyor:", e);
+        }
+    }
 
+    // WebGL fallback
+    return new BABYLON.Engine(canvas, true, {
+        preserveDrawingBuffer: true,
+        stencil: true,
+        disableWebGL2Support: true // Android 7 uyumu
+    });
+};
 
             
 var createScene = async function () {
@@ -105,7 +124,22 @@ var createScene = async function () {
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
+function adjustButtonSizeByOrientation() {
+    const isPortrait = screen.height > screen.width; // 🔁 ekranın fiziksel oranına bak
 
+    if (isPortrait) {
+        // Dikey mod
+            enlargeButton.style.width = 'screen.width/24';
+            enlargeButton.style.height = 'screen.width/24';
+    } else {
+        // Yatay mod
+            enlargeButton.style.width = 'screen.height/24';
+            enlargeButton.style.height = 'screen.height/24';
+    }
+}
+//window.addEventListener("resize", adjustButtonSizeByOrientation);
+window.addEventListener("orientationchange", adjustButtonSizeByOrientation);
+adjustButtonSizeByOrientation();
 
     let enlargeStatus = false;
     function toggleVRMode() {
