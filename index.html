@@ -143,7 +143,7 @@ function adjustButtonSizeByOrientation() {
     const ratio = window.innerHeight > window.innerWidth
         ? window.innerHeight / window.innerWidth
         : window.innerWidth / window.innerHeight;
-    const size = ratio * 24;
+    const size = 1/ratio * 96;
     enlargeButton.style.width = `${size}px`;
     enlargeButton.style.height = `${size}px`;
 }
