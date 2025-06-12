@@ -118,7 +118,7 @@ var createScene = async function () {
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
-  
+  /*
 async function adjustButtonSizeByOrientation() {
     if (window.innerHeight > window.innerWidth) {
 	  const size = Math.ceil((window.innerHeight / window.innerWidth ) * 48);
@@ -127,14 +127,30 @@ async function adjustButtonSizeByOrientation() {
         enlargeButton.style.height = `${size}px`;
     } else {
 	const size = Math.ceil(window.innerHeight / window.innerWidth * 48);
-	    console.log("iOS sensör izni hatası: size")
+	    //console.log("iOS sensör izni hatası: size")
         enlargeButton.style.width = '48px'; // <-- backtick (`) ile yazıldı
+        enlargeButton.style.height = '48px';
+    }
+}
+*/
+
+
+
+async function adjustButtonSizeByOrientation() {
+    if (window.innerHeight < window.innerWidth) {
+        // Dikey mod
+        enlargeButton.style.width = '96px';
+        enlargeButton.style.height = '96px';
+    } else {
+        // Yatay mod
+        enlargeButton.style.width = '48px';
         enlargeButton.style.height = '48px';
     }
 }
 
 
 
+	
 	
 // Bu yardımcı fonksiyon, güvenli bir şekilde yeniden çağırır
 function triggerAdjustButtonSize() {
