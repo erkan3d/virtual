@@ -136,7 +136,7 @@ function triggerAdjustButtonSize() {
 }
 
 // Olay dinleyicileri
-window.addEventListener("resize", triggerAdjustButtonSize);
+//window.addEventListener("resize", triggerAdjustButtonSize);
 window.addEventListener("orientationchange", triggerAdjustButtonSize);
 window.addEventListener("load", adjustButtonSizeByOrientation);
 
@@ -227,6 +227,7 @@ async function handleFullscreenChange() {
   } else {
     //enlargeButton.style.width = '3vw';
     //enlargeButton.style.height = '3vw';
+	  adjustButtonSizeByOrientation();
     enlargeButton.style.filter = "invert(0%)";
     vrCamera.detachControl(canvas);
     freeCamera.attachControl(canvas, true);
