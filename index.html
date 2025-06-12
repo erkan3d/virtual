@@ -118,7 +118,7 @@ var createScene = async function () {
     };
 
 
-async function adjustButtonSizeByOrientation() {
+async function setButtonSizeInPhysicalPixels() {
     const ratio = window.innerHeight > window.innerWidth
         ? window.innerHeight / window.innerWidth
         : window.innerWidth / window.innerHeight;
