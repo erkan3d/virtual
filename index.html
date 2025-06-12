@@ -120,14 +120,14 @@ var createScene = async function () {
 async function adjustButtonSizeByOrientation() {
     if (window.innerHeight > window.innerWidth) {
         // Dikey mod
-	const size = Math.round(window.innerWidth / 32);
-        enlargeButton.style.width = `${size}px`;
-        enlargeButton.style.height = `${size}px`;
+	//const size = Math.round(window.innerWidth / 32);
+        enlargeButton.style.width = `148px`;
+        enlargeButton.style.height = `148px`;
     } else {
         // Yatay mod
-	const size = Math.round(window.innerHeight / 32);
-        enlargeButton.style.width = `${size}px`;
-        enlargeButton.style.height = `${size}px`;
+	//const size = Math.round(window.innerHeight / 32);
+        enlargeButton.style.width = `48px`;
+        enlargeButton.style.height = `48px`;
     }
 }
 
@@ -152,7 +152,7 @@ function adjustButtonSizeByOrientation() {
 // Bu yardımcı fonksiyon, güvenli bir şekilde yeniden çağırır
 function triggerAdjustButtonSize() {
     // Bazı cihazlarda rotate sonrası boyutlar hemen güncellenmez
-    setTimeout(adjustButtonSizeByOrientation, 100); // 100ms gecikmeli çalıştır
+    setTimeout(adjustButtonSizeByOrientation, 300); // 100ms gecikmeli çalıştır
 }
 
 // Olay dinleyicileri
