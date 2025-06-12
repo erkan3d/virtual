@@ -117,15 +117,15 @@ var createScene = async function () {
         toggleVRMode();
     };
 
-function adjustButtonSizeByOrientation() {
+async function adjustButtonSizeByOrientation() {
     if (window.innerHeight > window.innerWidth) {
         // Dikey mod
-	const size = Math.round(32);
+	const size = Math.round(132);
         enlargeButton.style.width = `${size}px`;
         enlargeButton.style.height = `${size}px`;
     } else {
         // Yatay mod
-	const size = Math.round(132);
+	const size = Math.round(32);
         enlargeButton.style.width = `${size}px`;
         enlargeButton.style.height = `${size}px`;
     }
