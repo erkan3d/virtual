@@ -62,12 +62,8 @@
                     var engine = null;
         var scene = null;
         var sceneToRender = null;
-        var createDefaultEngine = async function() { 
-                    var engine = new BABYLON.WebGPUEngine(canvas);
-                    await engine.initAsync();
-                    return engine;
-                };
-        var createScene = async function () {
+        var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
+var createScene = async function () {
     var scene = new BABYLON.Scene(engine);
 
     var freeCamera = new BABYLON.FreeCamera("freeCam", new BABYLON.Vector3(0, 1.6, -10), scene);
@@ -639,7 +635,7 @@ window.addEventListener("orientationchange", () => setTimeout(updateLabelPositio
     var ground = BABYLON.Mesh.CreateGround("ground1", 10, 10, 2, scene);
 
     return scene;
-};
+};};
                 window.initFunction = async function() {
                     
                     
@@ -662,8 +658,7 @@ window.addEventListener("orientationchange", () => setTimeout(updateLabelPositio
         if (!engine) throw 'engine should not be null.';
         startRenderLoop(engine, canvas);
         window.scene = createScene();};
-        initFunction().then(() => {scene.then(returnedScene => { sceneToRender = returnedScene; });
-        
+        initFunction().then(() => {sceneToRender = scene
                     });
 
                     // Resize
