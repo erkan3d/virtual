@@ -117,17 +117,16 @@ var createScene = async function () {
         toggleVRMode();
     };
 function adjustButtonSizeByOrientation() {
-    const ratio = window.innerHeight > window.innerWidth
-        ? window.innerHeight / window.innerWidth
-        : window.innerWidth / window.innerHeight;
-    const size = ratio * 24;
-    enlargeButton.style.width = `${size}px`;
+    const size = Math.round(window.innerWidth / 32);
+
+    enlargeButton.style.width = `${size}px`;   // <-- backtick (`) ile yazıldı
     enlargeButton.style.height = `${size}px`;
 }
+
 window.addEventListener("resize", adjustButtonSizeByOrientation);
 window.addEventListener("orientationchange", adjustButtonSizeByOrientation);
-window.addEventListener("load", adjustButtonSizeByOrientation); // Ekstra güvenlik
-adjustButtonSizeByOrientation(); // Sayfa yüklenince ilk ayar
+window.addEventListener("load", adjustButtonSizeByOrientation);
+adjustButtonSizeByOrientation();
 
     let enlargeStatus = false;
     function toggleVRMode() {
@@ -209,8 +208,8 @@ async function handleFullscreenChange() {
     clearPreviousMeasurement();
 
   } else {
-    enlargeButton.style.width = '48px';
-    enlargeButton.style.height = '48px';
+    //enlargeButton.style.width = '48px';
+    //enlargeButton.style.height = '48px';
     enlargeButton.style.filter = "invert(0%)";
     vrCamera.detachControl(canvas);
     freeCamera.attachControl(canvas, true);
