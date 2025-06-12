@@ -81,7 +81,7 @@
 			});
 		};
 				
-        var createScene = async function () {
+var createScene = async function () {
     var scene = new BABYLON.Scene(engine);
 
     var freeCamera = new BABYLON.FreeCamera("freeCam", new BABYLON.Vector3(0, 1.6, -10), scene);
@@ -96,20 +96,13 @@
 
     const hudLayer = document.createElement('div');
     canvasParent.appendChild(hudLayer);
-		
-function setButtonSizeInPhysicalPixels(button, physicalSizePx = 48) {
-    const dpr = window.devicePixelRatio || 1;
-    const cssSize = physicalSizePx / dpr;
 
-    button.style.width = `${cssSize}px`;
-    button.style.height = `${cssSize}px`;
-}
     const enlargeButton = document.createElement('button');
     hudLayer.appendChild(enlargeButton);
     enlargeButton.style.position = 'absolute';
     enlargeButton.style.right = '0px';
     enlargeButton.style.bottom = '0px';
-    enlargeButton.style.width = '48%';
+    enlargeButton.style.width = '48px';
     enlargeButton.style.height = '48px';
     enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
     enlargeButton.style.backgroundSize = 'contain';
@@ -124,15 +117,6 @@ function setButtonSizeInPhysicalPixels(button, physicalSizePx = 48) {
         toggleVRMode();
     };
 
-// Fiziksel boyutu ayarla (48px gerçek piksel)
-function updateButtonSize() {
-    setButtonSizeInPhysicalPixels(enlargeButton, 48);
-}
-
-// Sayfa yüklenince ve döndürülünce güncelle
-window.addEventListener("load", updateButtonSize);
-window.addEventListener("resize", updateButtonSize);
-window.addEventListener("orientationchange", updateButtonSize);
     let enlargeStatus = false;
     function toggleVRMode() {
         if (!enlargeStatus) {
