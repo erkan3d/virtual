@@ -67,7 +67,10 @@
                     await engine.initAsync();
                     return engine;
                 };
-        var createScene = async function () {
+
+
+            
+var createScene = async function () {
     var scene = new BABYLON.Scene(engine);
 
     var freeCamera = new BABYLON.FreeCamera("freeCam", new BABYLON.Vector3(0, 1.6, -10), scene);
@@ -88,7 +91,7 @@
     enlargeButton.style.position = 'absolute';
     enlargeButton.style.right = '0px';
     enlargeButton.style.bottom = '0px';
-    enlargeButton.style.width = '48px';
+    enlargeButton.style.width = '48%';
     enlargeButton.style.height = '48px';
     enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
     enlargeButton.style.backgroundSize = 'contain';
@@ -115,7 +118,7 @@ function adjustButtonSizeByOrientation() {
             enlargeButton.style.height = 'screen.height/24';
     }
 }
-window.addEventListener("resize", adjustButtonSizeByOrientation);
+//window.addEventListener("resize", adjustButtonSizeByOrientation);
 window.addEventListener("orientationchange", adjustButtonSizeByOrientation);
 adjustButtonSizeByOrientation();
 
@@ -655,6 +658,10 @@ window.addEventListener("orientationchange", () => setTimeout(updateLabelPositio
     var ground = BABYLON.Mesh.CreateGround("ground1", 10, 10, 2, scene);
 
     return scene;
+};
+
+
+            
 };
                 window.initFunction = async function() {
                     
