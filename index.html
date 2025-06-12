@@ -120,12 +120,12 @@ var createScene = async function () {
 async function adjustButtonSizeByOrientation() {
     if (window.innerHeight > window.innerWidth) {
         // Dikey mod
-        enlargeButton.style.width = '48px';
-        enlargeButton.style.height = '48px';
-    } else {
-        // Yatay mod
         enlargeButton.style.width = '96px';
         enlargeButton.style.height = '96px';
+    } else {
+        // Yatay mod
+        enlargeButton.style.width = '48px';
+        enlargeButton.style.height = '48px';
     }
 }
 
