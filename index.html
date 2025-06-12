@@ -116,29 +116,29 @@ var createScene = async function () {
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
-/*
+
 async function adjustButtonSizeByOrientation() {
     if (window.innerHeight > window.innerWidth) {
         // Dikey mod
-	const size = Math.round(132);
+	const size = Math.round(window.innerWidth / 32);
         enlargeButton.style.width = `${size}px`;
         enlargeButton.style.height = `${size}px`;
     } else {
         // Yatay mod
-	const size = Math.round(32);
+	const size = Math.round(window.innerWidth / 32);
         enlargeButton.style.width = `${size}px`;
         enlargeButton.style.height = `${size}px`;
     }
 }
-*/
-	
+
+/*	
 async function adjustButtonSizeByOrientation() {
     const size = Math.round(window.innerWidth / 32);
 
     enlargeButton.style.width = `${size}px`;   // <-- backtick (`) ile yazıldı
     enlargeButton.style.height = `${size}px`;
 }
-
+*/
 window.addEventListener("resize", adjustButtonSizeByOrientation);
 window.addEventListener("orientationchange", adjustButtonSizeByOrientation);
 window.addEventListener("load", adjustButtonSizeByOrientation);
