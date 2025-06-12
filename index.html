@@ -157,7 +157,7 @@ function adjustButtonSizeByOrientation() {
 */
 
 async function adjustButtonSizeByOrientation() {
-    const ratio = window.innerHeight > window.innerWidth
+    const ratio = window.innerHeight < window.innerWidth
         ? window.innerHeight / window.innerWidth
         : window.innerWidth / window.innerHeight;
     const size = ratio * 24;
