@@ -116,31 +116,41 @@ var createScene = async function () {
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
-// CSS sınıfı ekleyerek daha güçlü kontrol
-function lockButtonSize(button, size = 48) {
-    const styleId = 'fixed-button-style';
+
+
+
+// Sabit buton boyutu fonksiyonu
+function keepButtonSizeFixed(button, size = 48) {
+    // Boyutları sabitle
+    button.style.width = `${size}px`;
+    button.style.height = `${size}px`;
     
-    // Eğer stil daha önce eklenmediyse ekle
-    if (!document.getElementById(styleId)) {
-        const style = document.createElement('style');
-        style.id = styleId;
-        style.textContent = `
-            .fixed-button-size {
-                width: ${size}px !important;
-                height: ${size}px !important;
-                min-width: ${size}px !important;
-                min-height: ${size}px !important;
-            }
-        `;
-        document.head.appendChild(style);
+    // Ekran değişikliklerini dinle
+    function checkSize() {
+        if (button.offsetWidth !== size || button.offsetHeight !== size) {
+            button.style.width = `${size}px`;
+            button.style.height = `${size}px`;
+        }
     }
     
-    // Sınıfı butona ekle
-    button.classList.add('fixed-button-size');
+    // Olay dinleyicileri
+    window.addEventListener('resize', () => {
+        setTimeout(checkSize, 100);
+    });
+    
+    window.addEventListener('orientationchange', () => {
+        setTimeout(checkSize, 100);
+    });
+    
+    // İlk yüklemede kontrol
+    checkSize();
 }
 
-// Kullanım:
-lockButtonSize(enlargeButton, 48);
+// Kullanım örneği:
+const enlargeButton = document.querySelector('#enlargeButton'); 
+keepButtonSizeFixed(enlargeButton, 48); // 48x48 piksel sabit boyut
+	
+	
 
     let enlargeStatus = false;
     function toggleVRMode() {
