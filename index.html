@@ -239,6 +239,7 @@ async function handleFullscreenChange() {
       }
     }
 	  //window.addEventListener("resize", triggerAdjustButtonSize);
+	  const rawSize = parseFloat(enlargeButton.style.width);
 	  const btnsize = enlargeButton.style.width/3
     enlargeButton.style.width = '${btnsize}px';
     enlargeButton.style.height = '${btnsize}px';
