@@ -102,8 +102,8 @@ var createScene = async function () {
     enlargeButton.style.position = 'absolute';
     enlargeButton.style.right = '0px';
     enlargeButton.style.bottom = '0px';
-    enlargeButton.style.width = '148px';
-    enlargeButton.style.height = '148px';
+    //enlargeButton.style.width = '148px';
+    //enlargeButton.style.height = '148px';
     enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
     enlargeButton.style.backgroundSize = 'contain';
     enlargeButton.style.backgroundColor = 'transparent';
@@ -116,6 +116,18 @@ var createScene = async function () {
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
+function adjustButtonSizeByOrientation() {
+    const ratio = window.innerHeight > window.innerWidth
+        ? window.innerHeight / window.innerWidth
+        : window.innerWidth / window.innerHeight;
+    const size = ratio * 24;
+    enlargeButton.style.width = `${size}px`;
+    enlargeButton.style.height = `${size}px`;
+}
+window.addEventListener("resize", adjustButtonSizeByOrientation);
+window.addEventListener("orientationchange", adjustButtonSizeByOrientation);
+window.addEventListener("load", adjustButtonSizeByOrientation); // Ekstra güvenlik
+adjustButtonSizeByOrientation(); // Sayfa yüklenince ilk ayar
 
     let enlargeStatus = false;
     function toggleVRMode() {
