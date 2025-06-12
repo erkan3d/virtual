@@ -102,8 +102,8 @@ var createScene = async function () {
     enlargeButton.style.position = 'absolute';
     enlargeButton.style.right = '0px';
     enlargeButton.style.bottom = '0px';
-    enlargeButton.style.width = 'min(48px, 40vw)';
-    enlargeButton.style.height = 'min(48px, 40vw)';
+    enlargeButton.style.width = 'min(48px, 8vw)';
+    enlargeButton.style.height = 'min(48px, 80vw)';
     enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
     enlargeButton.style.backgroundSize = 'contain';
     enlargeButton.style.backgroundColor = 'transparent';
@@ -190,8 +190,8 @@ async function handleFullscreenChange() {
         return;
       }
     }
-    enlargeButton.style.width = 'min(32px, 40vw)';
-    enlargeButton.style.height = 'min(32px, 40vw)';
+    enlargeButton.style.width = 'min(32px, 8vw)';
+    enlargeButton.style.height = 'min(32px, 8vw)';
     enlargeButton.style.filter = "invert(100%)"; //renkleri ters  çevir
     freeCamera.detachControl(canvas);
     vrCamera.attachControl(canvas, true);
@@ -200,8 +200,8 @@ async function handleFullscreenChange() {
     clearPreviousMeasurement();
 
   } else {
-    enlargeButton.style.width = 'min(48px, 40vw)';
-    enlargeButton.style.height = 'min(48px, 40vw)';
+    enlargeButton.style.width = 'min(48px, 8vw)';
+    enlargeButton.style.height = 'min(48px, 8vw)';
 	  adjustButtonSizeByOrientation();
     enlargeButton.style.filter = "invert(0%)";
     vrCamera.detachControl(canvas);
