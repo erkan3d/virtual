@@ -113,12 +113,14 @@ var createScene = async function () {
     enlargeButton.style.zIndex = '9999';
     enlargeButton.style.transform = 'translateZ(0)';
 
+
+	
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
     
 async function adjustButtonSizeByOrientation() {
-    if (window.innerHeight > window.innerWidth) {
+    if (window.innerHeight < window.innerWidth) {
         // Dikey mod
         enlargeButton.style.width = '96px';
         enlargeButton.style.height = '96px';
@@ -129,6 +131,9 @@ async function adjustButtonSizeByOrientation() {
     }
 }
 
+
+
+	
 // Bu yardımcı fonksiyon, güvenli bir şekilde yeniden çağırır
 function triggerAdjustButtonSize() {
     // Bazı cihazlarda rotate sonrası boyutlar hemen güncellenmez
