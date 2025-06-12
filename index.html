@@ -120,14 +120,12 @@ var createScene = async function () {
     };
   
 async function adjustButtonSizeByOrientation() {
-    if (window.innerHeight < window.innerWidth) {
-        // Dikey mod
-	  const size = Math.ceil((window.innerWidth / window.innerHeight) * 48);
+    if (window.innerHeight > window.innerWidth) {
+	  const size = Math.ceil((window.innerHeight / window.innerWidth ) * 48);
 	    //console.log("iOS sensör izni hatası:");
         enlargeButton.style.width = `${size}px`;
         enlargeButton.style.height = `${size}px`;
     } else {
-        // Yatay mod
 	//const size = Math.ceil(window.innerHeight / window.innerWidth * 48);
         enlargeButton.style.width = '48px'; // <-- backtick (`) ile yazıldı
         enlargeButton.style.height = '48px';
