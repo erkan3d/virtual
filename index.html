@@ -91,9 +91,6 @@ var createScene = async function () {
     var vrCamera = new BABYLON.VRDeviceOrientationFreeCamera("vrCam", new BABYLON.Vector3(0, 1.6, -10), scene);
     vrCamera.setTarget(new BABYLON.Vector3(0, 1.6, 0));
 
-    var usingVR = false;
-    var sensorPermissionGranted = false;
-
     const canvasParent = document.getElementById('canvasZone');
     canvasParent.style.position = 'relative';
 
@@ -105,23 +102,47 @@ var createScene = async function () {
     enlargeButton.style.position = 'absolute';
     enlargeButton.style.right = '0px';
     enlargeButton.style.bottom = '0px';
-    enlargeButton.style.width = '48px';
-    enlargeButton.style.height = '48px';
-    enlargeButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-    enlargeButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/512/6524/6524693.png') no-repeat center`;
+    enlargeButton.style.width = '3vw';
+    enlargeButton.style.height = '3vw';
+    enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
     enlargeButton.style.backgroundSize = 'contain';
     enlargeButton.style.backgroundColor = 'transparent';
     enlargeButton.style.border = 'none';
     enlargeButton.style.cursor = 'pointer';
     enlargeButton.style.pointerEvents = 'all';
-
-    let enlargeStatus = false;
+    enlargeButton.style.zIndex = '9999';
+    enlargeButton.style.transform = 'translateZ(0)';
 
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
+async function adjustButtonSizeByOrientation() {
+    const size = window.innerWidth / window.innerHeight * 48;
+    if (window.innerHeight > window.innerWidth) {
+        // Dikey mod
+        enlargeButton.style.width = '${size}px';
+        enlargeButton.style.height = '${size}px';
+    } else {
+        // Yatay mod
+        enlargeButton.style.width = '${size}px';
+        enlargeButton.style.height = '${size}px';
+    }
+}
 
+// Bu yardımcı fonksiyon, güvenli bir şekilde yeniden çağırır
+function triggerAdjustButtonSize() {
+    // Bazı cihazlarda rotate sonrası boyutlar hemen güncellenmez
+    setTimeout(adjustButtonSizeByOrientation, 100); // 100ms gecikmeli çalıştır
+}
+
+// Olay dinleyicileri
+window.addEventListener("resize", triggerAdjustButtonSize);
+window.addEventListener("orientationchange", triggerAdjustButtonSize);
+window.addEventListener("load", adjustButtonSizeByOrientation);
+
+// İlk çalıştırma
+adjustButtonSizeByOrientation();
+    let enlargeStatus = false;
     function toggleVRMode() {
         if (!enlargeStatus) {
             canvasParent.requestFullscreen();
@@ -164,15 +185,17 @@ cardboardStrip.addEventListener("pointerup", (event) => {
     }
 });
 
-
+// tam ekerana geçiş ve IOS sensor kullanımı için kullanıcı izni
+var usingVR = false;
+var sensorPermissionGranted = false;
 async function handleFullscreenChange() {
   const isFullscreen = !!document.fullscreenElement || !!document.webkitFullscreenElement;
   enlargeStatus = isFullscreen;
 
   cardboardStrip.style.pointerEvents = isFullscreen ? 'all' : 'none';
   enlargeButton.style.backgroundImage = isFullscreen
-    ? "url('https://cdn-icons-png.freepik.com/512/9425/9425505.png')"  // küçültme ikonu
-    : "url('https://cdn-icons-png.freepik.com/512/6524/6524693.png')";  // büyütme ikonu
+    ? "url('https://cdn-icons-png.freepik.com/256/18672/18672116.png')"  // küçültme ikonu
+    : "url('https://cdn-icons-png.freepik.com/256/17460/17460854.png')";  // büyütme ikonu
 
   if (isFullscreen) {
     if (BABYLON.Engine.IsIOS && !sensorPermissionGranted) {
@@ -181,7 +204,7 @@ async function handleFullscreenChange() {
         if (permission === 'granted') {
           sensorPermissionGranted = true;
         } else {
-          alert("Sensör izni gerekli.");
+          alert("Sensor permission required for VR experience.");
           return;
         }
       } catch (error) {
@@ -189,25 +212,25 @@ async function handleFullscreenChange() {
         return;
       }
     }
-
+    enlargeButton.style.width = '2vw';
+    enlargeButton.style.height = '2vw';
+    enlargeButton.style.filter = "invert(100%)"; //renkleri ters  çevir
     freeCamera.detachControl(canvas);
     vrCamera.attachControl(canvas, true);
-    vrCamera.position.copyFrom(freeCamera.position);
-    vrCamera.setTarget(freeCamera.getTarget());
     scene.activeCamera = vrCamera;
     usingVR = true;
     clearPreviousMeasurement();
 
   } else {
+    enlargeButton.style.width = '3vw';
+    enlargeButton.style.height = '3vw';
+    enlargeButton.style.filter = "invert(0%)";
     vrCamera.detachControl(canvas);
     freeCamera.attachControl(canvas, true);
-    freeCamera.position.copyFrom(vrCamera.position);
-    freeCamera.setTarget(vrCamera.getTarget());
     scene.activeCamera = freeCamera;
     usingVR = false;
   }
 }
-
 document.addEventListener("fullscreenchange", handleFullscreenChange);
 document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
 
@@ -256,14 +279,12 @@ touchArea.style.background = 'transparent';
 touchArea.style.touchAction = 'none';
 canvasParent.appendChild(touchArea);
 
-// 👉 Dokunma başladığında
 touchArea.addEventListener("pointerdown", (evt) => {
     activePointerId = evt.pointerId;
     handleMovementInput();
     movementState.forward = true;
 });
 
-// 👉 Dokunma bittiğinde (tüm pencere genelinde dinle)
 window.addEventListener("pointerup", (evt) => {
     if (evt.pointerId === activePointerId) {
         movementState.forward = false;
@@ -271,14 +292,12 @@ window.addEventListener("pointerup", (evt) => {
     }
 });
 
-// 👉 Pointer cancel eventini ekle (en az değişiklik)
 window.addEventListener("pointercancel", (evt) => {
     if (evt.pointerId === activePointerId) {
         movementState.forward = false;
         activePointerId = null;
     }
 });
-
 
 
     window.addEventListener("keydown", (e) => {
@@ -417,20 +436,6 @@ let activeMeasure = {
 
 // === GUI UI oluştur ===
 const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-/*
-// Kamera hareket kontrolü
-let lastCameraPosition = Camera.position.clone();
-let lastCameraRotation = Camera.rotation ? Camera.rotation.clone() : new BABYLON.Vector3.Zero();
-let cameraIsMoving = false;
-
-scene.onBeforeRenderObservable.add(() => {
-    const posChanged = !Camera.position.equalsWithEpsilon(lastCameraPosition, 0.001);
-    const rotChanged = Camera.rotation && !Camera.rotation.equalsWithEpsilon(lastCameraRotation, 0.001);
-    cameraIsMoving = posChanged || rotChanged;
-    lastCameraPosition.copyFrom(Camera.position);
-    if (Camera.rotation) lastCameraRotation.copyFrom(Camera.rotation);
-});
-*/
 
 // Pointer hareketi kontrolü
 let pointerDownPos = null;
@@ -629,7 +634,9 @@ function updateLabelPosition() {
 window.addEventListener("resize", updateLabelPosition);
 window.addEventListener("orientationchange", () => setTimeout(updateLabelPosition, 300));
 
-    // Işık ve objeler (aşağıdaki kısmı olduğu gibi bırakıyorum)
+
+
+    //3d modeller
     // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
     var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
 
