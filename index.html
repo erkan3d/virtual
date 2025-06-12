@@ -101,18 +101,23 @@
 
     enlargeButton.onclick = async function () {
         toggleVRMode();
-    };
-    function adjustButtonSizeByOrientation() {
-        if (screen.innerHeight > screen.innerWidth) {
-            // Dikey mod
-            enlargeButton.style.width = 'screen.innerWidth/24';
-            enlargeButton.style.height = 'screen.innerWidth/24';
-        } else {
-            // Yatay mod
-            enlargeButton.style.width = 'screen.innerHeight/24';
-            enlargeButton.style.height = 'screen.innerHeight/24';
-        }
+function adjustButtonSizeByOrientation() {
+    const isPortrait = screen.height > screen.width; // 🔁 ekranın fiziksel oranına bak
+
+    if (isPortrait) {
+        // Dikey mod
+        enlargeButton.style.width = 'window.innerWidth/24';
+        enlargeButton.style.height = 'window.innerWidth/24';
+    } else {
+        // Yatay mod
+        enlargeButton.style.width = 'window.innerHeight/24';
+        enlargeButton.style.height = 'window.innerHeight/24';
     }
+}
+//window.addEventListener("resize", adjustButtonSizeByOrientation);
+window.addEventListener("orientationchange", adjustButtonSizeByOrientation);
+adjustButtonSizeByOrientation();
+        
     let enlargeStatus = false;
     function toggleVRMode() {
         if (!enlargeStatus) {
