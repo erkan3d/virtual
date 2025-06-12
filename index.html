@@ -122,7 +122,8 @@ var createScene = async function () {
 async function adjustButtonSizeByOrientation() {
     if (window.innerHeight < window.innerWidth) {
         // Dikey mod
-	  const result = Math.ceil(window.innerHeight / window.innerWidth * 48);
+	  const size = Math.ceil(window.innerHeight / window.innerWidth * 48);
+	    //console.log("iOS sensör izni hatası:");
         enlargeButton.style.width = `${size}px`;
         enlargeButton.style.height = `${size}px`;
     } else {
