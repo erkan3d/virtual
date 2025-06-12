@@ -178,12 +178,13 @@ window.addEventListener("load", () => setButtonSizeInPhysicalPixels(DEFAULT_PHYS
 // İlk ayarlama
 adjustButtonSizeByOrientation(DEFAULT_PHYSICAL_SIZE);
 */
-const DEFAULT_PHYSICAL_SIZE = 48;
-
-function setButtonSizeInPhysicalPixels(physicalPx) {
-  const cssPx = physicalPx / window.devicePixelRatio;
-  enlargeButton.style.width = `${cssPx}px`;
-  enlargeButton.style.height = `${cssPx}px`;
+async function setButtonSizeInPhysicalPixels() {
+    const ratio = window.innerHeight < window.innerWidth
+        ? window.innerHeight / window.innerWidth
+        : window.innerWidth / window.innerHeight;
+    const size = ratio * 24;
+    enlargeButton.style.width = `${size}px`;
+    enlargeButton.style.height = `${size}px`;
 }
 
 function triggerAdjustButtonSize() {
