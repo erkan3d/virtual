@@ -106,18 +106,18 @@ function adjustButtonSizeByOrientation() {
 
     if (isPortrait) {
         // Dikey mod
-        enlargeButton.style.width = 'window.innerWidth/24';
-        enlargeButton.style.height = 'window.innerWidth/24';
+            enlargeButton.style.width = 'window.innerWidth/24';
+            enlargeButton.style.height = 'window.innerWidth/24';
     } else {
         // Yatay mod
-        enlargeButton.style.width = 'window.innerHeight/24';
-        enlargeButton.style.height = 'window.innerHeight/24';
+            enlargeButton.style.width = 'window.innerHeight/24';
+            enlargeButton.style.height = 'window.innerHeight/24';
     }
 }
-//window.addEventListener("resize", adjustButtonSizeByOrientation);
+window.addEventListener("resize", adjustButtonSizeByOrientation);
 window.addEventListener("orientationchange", adjustButtonSizeByOrientation);
 adjustButtonSizeByOrientation();
-        
+
     let enlargeStatus = false;
     function toggleVRMode() {
         if (!enlargeStatus) {
