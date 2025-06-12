@@ -102,8 +102,8 @@ var createScene = async function () {
     enlargeButton.style.position = 'absolute';
     enlargeButton.style.right = '0px';
     enlargeButton.style.bottom = '0px';
-    //enlargeButton.style.width = '48px';
-    //enlargeButton.style.height = '48px';
+    enlargeButton.style.width = '48px';
+    enlargeButton.style.height = '48px';
     enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
     enlargeButton.style.backgroundSize = 'contain';
     enlargeButton.style.backgroundColor = 'transparent';
@@ -117,66 +117,7 @@ var createScene = async function () {
         toggleVRMode();
     };
 
-/*
-async function setButtonSizeInPhysicalPixels() {
-    const ratio = window.innerHeight > window.innerWidth
-        ? window.innerHeight / window.innerWidth
-        : window.innerWidth / window.innerHeight;
-    const size = ratio * 256;
-	
-    if (window.innerHeight > window.innerWidth) {
-        // Dikey mod
-	//const size = Math.round(window.innerWidth / 32);
-        enlargeButton.style.width = `256px`;
-        enlargeButton.style.height = `256px`;
-    } else {
-        // Yatay mod
-	//const size = Math.round(window.innerHeight / 32);
-        enlargeButton.style.width = `${size}px`;
-        enlargeButton.style.height = `${size}px`;
-    }
-}
 
-/*
-async function setButtonSizeInPhysicalPixels() {
-    const size = Math.round(window.innerWidth / 22);
-
-    enlargeButton.style.width = `${size}px`;   // <-- backtick (`) ile yazıldı
-    enlargeButton.style.height = `${size}px`;
-}
-
-
-function adjustButtonSizeByOrientation() {
-    const ratio = window.innerHeight > window.innerWidth
-        ? window.innerHeight / window.innerWidth
-        : window.innerWidth / window.innerHeight;
-    const size = ratio * 2048;
-    enlargeButton.style.width = `${size}px`;
-    enlargeButton.style.height = `${size}px`;
-}
-	
-*/
-
-async function adjustButtonSizeByOrientation() {
-    const ratio = window.innerHeight > window.innerWidth
-        ? window.innerHeight / window.innerWidth
-        : window.innerWidth / window.innerHeight;
-    const size = ratio * 512;
-    enlargeButton.style.width = `${size}px`;
-    enlargeButton.style.height = `${size}px`;
-}
-
-	
-function triggerAdjustButtonSize() {
-  setTimeout(() => adjustButtonSizeByOrientation(DEFAULT_PHYSICAL_SIZE), 300);
-}
-
-window.addEventListener("resize", triggerAdjustButtonSize);
-window.addEventListener("orientationchange", triggerAdjustButtonSize);
-window.addEventListener("load", () => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE));
-
-// İlk ayarlama
-adjustButtonSizeByOrientation(DEFAULT_PHYSICAL_SIZE);
 
 
 
