@@ -116,8 +116,13 @@ var createScene = async function () {
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
-
+/*
 async function adjustButtonSizeByOrientation() {
+    const ratio = window.innerHeight > window.innerWidth
+        ? window.innerHeight / window.innerWidth
+        : window.innerWidth / window.innerHeight;
+    const size = ratio * 256;
+	
     if (window.innerHeight > window.innerWidth) {
         // Dikey mod
 	//const size = Math.round(window.innerWidth / 32);
@@ -125,9 +130,9 @@ async function adjustButtonSizeByOrientation() {
         enlargeButton.style.height = `256px`;
     } else {
         // Yatay mod
-	//const size = Math.round(window.innerHeight / 32);
-        enlargeButton.style.width = `512px`;
-        enlargeButton.style.height = `512px`;
+	const size = Math.round(window.innerHeight / 32);
+        enlargeButton.style.width = `${size}px`;
+        enlargeButton.style.height = `${size}px`;
     }
 }
 
@@ -139,16 +144,16 @@ async function adjustButtonSizeByOrientation() {
     enlargeButton.style.height = `${size}px`;
 }
 
-
+*/
 function adjustButtonSizeByOrientation() {
     const ratio = window.innerHeight > window.innerWidth
-        ? window.innerHeight / window.innerWidth
-        : window.innerWidth / window.innerHeight;
-    const size = 1/ratio * 96;
+        ? window.innerWidth / window.innerHeight
+        :  window.innerHeight / window.innerWidth;
+    const size = ratio * 256;
     enlargeButton.style.width = `${size}px`;
     enlargeButton.style.height = `${size}px`;
 }
-*/	
+	
 // Bu yardımcı fonksiyon, güvenli bir şekilde yeniden çağırır
 function triggerAdjustButtonSize() {
     // Bazı cihazlarda rotate sonrası boyutlar hemen güncellenmez
