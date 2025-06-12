@@ -81,6 +81,27 @@
 			});
 		};
 				
+/*
+		var createDefaultEngine = async function () {
+			if (BABYLON.WebGPUEngine && BABYLON.WebGPUEngine.IsSupported) {
+				try {
+					const webgpu = new BABYLON.WebGPUEngine(canvas);
+					await webgpu.initAsync();
+					return webgpu;
+				} catch (e) {
+					console.warn("WebGPU başlatılamadı, WebGL'e geçiliyor:", e);
+				}
+			}
+
+			// WebGL fallback
+			return new BABYLON.Engine(canvas, true, {
+				preserveDrawingBuffer: true,
+				stencil: true,
+				disableWebGL2Support: true // Android 7 uyumu
+			});
+		};
+
+*/
 var createScene = async function () {
     var scene = new BABYLON.Scene(engine);
 
@@ -102,8 +123,8 @@ var createScene = async function () {
     enlargeButton.style.position = 'absolute';
     enlargeButton.style.right = '0px';
     enlargeButton.style.bottom = '0px';
-    enlargeButton.style.width = '48px';
-    enlargeButton.style.height = '48px';
+    //enlargeButton.style.width = '48px';
+    //enlargeButton.style.height = '48px';
     enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
     enlargeButton.style.backgroundSize = 'contain';
     enlargeButton.style.backgroundColor = 'transparent';
@@ -116,13 +137,27 @@ var createScene = async function () {
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
+async function adjustButtonSizeByOrientation() {
+    const ratio = window.innerHeight > window.innerWidth
+        ? window.innerHeight / window.innerWidth
+        : window.innerWidth / window.innerHeight;
+    const size = ratio * 32;
+    enlargeButton.style.width = `${size}px`;
+    enlargeButton.style.height = `${size}px`;
+}
+// Bu yardımcı fonksiyon, güvenli bir şekilde yeniden çağırır
+function triggerAdjustButtonSize() {
+    // Bazı cihazlarda rotate sonrası boyutlar hemen güncellenmez
+    setTimeout(adjustButtonSizeByOrientation, 100); // 100ms gecikmeli çalıştır
+}
 
+// Olay dinleyicileri
+window.addEventListener("resize", triggerAdjustButtonSize);
+window.addEventListener("orientationchange", triggerAdjustButtonSize);
+window.addEventListener("load", adjustButtonSizeByOrientation);
 
-
-
-
-
-
+// İlk çalıştırma
+adjustButtonSizeByOrientation();
 
     let enlargeStatus = false;
     function toggleVRMode() {
@@ -135,8 +170,6 @@ var createScene = async function () {
         }
     }
 
-
-	
 // Cardboard şeridi (orta alan, başta pasif)
 const cardboardStrip = document.createElement('div');
 canvasParent.appendChild(cardboardStrip);
@@ -196,8 +229,8 @@ async function handleFullscreenChange() {
         return;
       }
     }
-enlargeButton.style.width = '32px'
-enlargeButton.style.height = '32px'
+    //enlargeButton.style.width = '32px';
+    //enlargeButton.style.height = '32px';
     enlargeButton.style.filter = "invert(100%)"; //renkleri ters  çevir
     freeCamera.detachControl(canvas);
     vrCamera.attachControl(canvas, true);
