@@ -102,8 +102,8 @@ var createScene = async function () {
     enlargeButton.style.position = 'absolute';
     enlargeButton.style.right = '0px';
     enlargeButton.style.bottom = '0px';
-    enlargeButton.style.width = '48px';
-    enlargeButton.style.height = '48px';
+    enlargeButton.style.width = 'min(48px, 4vw)';
+    enlargeButton.style.height = 'min(48px, 4vw)';
     enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
     enlargeButton.style.backgroundSize = 'contain';
     enlargeButton.style.backgroundColor = 'transparent';
@@ -118,54 +118,6 @@ var createScene = async function () {
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
-  /*
-async function adjustButtonSizeByOrientation() {
-    if (window.innerHeight > window.innerWidth) {
-	  const size = Math.ceil((window.innerHeight / window.innerWidth ) * 48);
-	    //console.log("iOS sensör izni hatası:");
-        enlargeButton.style.width = `${size}px`;
-        enlargeButton.style.height = `${size}px`;
-    } else {
-	const size = Math.ceil(window.innerHeight / window.innerWidth * 48);
-	    //console.log("iOS sensör izni hatası: size")
-        enlargeButton.style.width = '48px'; // <-- backtick (`) ile yazıldı
-        enlargeButton.style.height = '48px';
-    }
-}
-*/
-
-
-
-async function adjustButtonSizeByOrientation() {
-    if (window.innerHeight < window.innerWidth) {
-        // Dikey mod
-        enlargeButton.style.width = '96px';
-        enlargeButton.style.height = '96px';
-    }/* else {
-        // Yatay mod
-        enlargeButton.style.width = '48px';
-        enlargeButton.style.height = '48px';
-    }*/
-}
-
-
-
-	
-	
-// Bu yardımcı fonksiyon, güvenli bir şekilde yeniden çağırır
-function triggerAdjustButtonSize() {
-    // Bazı cihazlarda rotate sonrası boyutlar hemen güncellenmez
-    setTimeout(adjustButtonSizeByOrientation, 300); // 100ms gecikmeli çalıştır
-}
-
-// Olay dinleyicileri
-//window.addEventListener("resize", triggerAdjustButtonSize);
-window.addEventListener("orientationchange", triggerAdjustButtonSize);
-window.addEventListener("load", adjustButtonSizeByOrientation);
-
-// İlk çalıştırma
-adjustButtonSizeByOrientation();
-
 
 
     let enlargeStatus = false;
@@ -238,8 +190,8 @@ async function handleFullscreenChange() {
         return;
       }
     }
-    enlargeButton.style.width = '32px';
-    enlargeButton.style.height = '32px';
+    enlargeButton.style.width = 'min(32px, 4vw)';
+    enlargeButton.style.height = 'min(32px, 4vw)';
     enlargeButton.style.filter = "invert(100%)"; //renkleri ters  çevir
     freeCamera.detachControl(canvas);
     vrCamera.attachControl(canvas, true);
@@ -248,8 +200,8 @@ async function handleFullscreenChange() {
     clearPreviousMeasurement();
 
   } else {
-    enlargeButton.style.width = '48px';
-    enlargeButton.style.height = '48px';
+    enlargeButton.style.width = 'min(48px, 4vw)';
+    enlargeButton.style.height = 'min(48px, 4vw)';
 	  adjustButtonSizeByOrientation();
     enlargeButton.style.filter = "invert(0%)";
     vrCamera.detachControl(canvas);
