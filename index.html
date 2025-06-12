@@ -103,14 +103,14 @@
         toggleVRMode();
     };
     function adjustButtonSizeByOrientation() {
-        if (window.innerHeight > window.innerWidth) {
+        if (screen.innerHeight > screen.innerWidth) {
             // Dikey mod
-            enlargeButton.style.width = 'window.innerWidth/24';
-            enlargeButton.style.height = 'window.innerWidth/24';
+            enlargeButton.style.width = 'screen.innerWidth/24';
+            enlargeButton.style.height = 'screen.innerWidth/24';
         } else {
             // Yatay mod
-            enlargeButton.style.width = 'window.innerHeight/24';
-            enlargeButton.style.height = 'window.innerHeight/24';
+            enlargeButton.style.width = 'screen.innerHeight/24';
+            enlargeButton.style.height = 'screen.innerHeight/24';
         }
     }
     let enlargeStatus = false;
