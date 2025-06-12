@@ -44,19 +44,6 @@
                 width: 100%;
                 height: 100%;
             }
-            #enlargeButton {
-  width: 48px;
-  height: 48px;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  background: url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center;
-  background-size: contain;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  z-index: 9999;
-}
         </style>
     </head>
     <body>
@@ -97,7 +84,6 @@
     canvasParent.appendChild(hudLayer);
 
     const enlargeButton = document.createElement('button');
-            enlargeButton.id = 'enlargeButton'; // ❗ Stil tanımı için ID veriyoruz
     hudLayer.appendChild(enlargeButton);
     enlargeButton.style.position = 'absolute';
     enlargeButton.style.right = '0px';
@@ -187,8 +173,8 @@ async function handleFullscreenChange() {
         return;
       }
     }
-    enlargeButton.style.width = '32px';
-    enlargeButton.style.height = '32px';
+    //enlargeButton.style.width = '32px';
+    //enlargeButton.style.height = '32px';
     enlargeButton.style.filter = "invert(100%)"; //renkleri ters  çevir
     freeCamera.detachControl(canvas);
     vrCamera.attachControl(canvas, true);
@@ -197,8 +183,8 @@ async function handleFullscreenChange() {
     clearPreviousMeasurement();
 
   } else {
-    enlargeButton.style.width = '48px';
-    enlargeButton.style.height = '48px';
+    //enlargeButton.style.width = '48px';
+    //enlargeButton.style.height = '48px';
     enlargeButton.style.filter = "invert(0%)";
     vrCamera.detachControl(canvas);
     freeCamera.attachControl(canvas, true);
