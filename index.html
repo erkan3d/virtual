@@ -117,7 +117,7 @@ var createScene = async function () {
         toggleVRMode();
     };
 
-/*
+
 async function adjustButtonSizeByOrientation() {
     const ratio = window.innerHeight > window.innerWidth
         ? window.innerHeight / window.innerWidth
@@ -137,8 +137,8 @@ async function adjustButtonSizeByOrientation() {
     }
 }
 
-
-async function adjustButtonSizeByOrientation() {
+/*
+async function setButtonSizeInPhysicalPixels() {
     const size = Math.round(window.innerWidth / 22);
 
     enlargeButton.style.width = `${size}px`;   // <-- backtick (`) ile yazıldı
@@ -178,14 +178,7 @@ window.addEventListener("load", () => setButtonSizeInPhysicalPixels(DEFAULT_PHYS
 // İlk ayarlama
 adjustButtonSizeByOrientation(DEFAULT_PHYSICAL_SIZE);
 */
-async function setButtonSizeInPhysicalPixels() {
-    const ratio = window.innerHeight < window.innerWidth
-        ? window.innerWidth / window.innerHeight
-        : window.innerHeight / window.innerWidth;
-    const size = ratio * 24;
-    enlargeButton.style.width = `${size}px`;
-    enlargeButton.style.height = `${size}px`;
-}
+
 
 function triggerAdjustButtonSize() {
   setTimeout(() => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE), 300);
