@@ -62,34 +62,26 @@
                     var engine = null;
         var scene = null;
         var sceneToRender = null;
-            /*
-        var createDefaultEngine = async function() { 
-                    var engine = new BABYLON.WebGPUEngine(canvas);
-                    await engine.initAsync();
-                    return engine;
-                };
-*/
-var createDefaultEngine = async function () {
-    if (BABYLON.WebGPUEngine && BABYLON.WebGPUEngine.IsSupported) {
-        try {
-            const webgpu = new BABYLON.WebGPUEngine(canvas);
-            await webgpu.initAsync();
-            return webgpu;
-        } catch (e) {
-            console.warn("WebGPU başlatılamadı, WebGL'e geçiliyor:", e);
-        }
-    }
+		var createDefaultEngine = async function () {
+			if (BABYLON.WebGPUEngine && BABYLON.WebGPUEngine.IsSupported) {
+				try {
+					const webgpu = new BABYLON.WebGPUEngine(canvas);
+					await webgpu.initAsync();
+					return webgpu;
+				} catch (e) {
+					console.warn("WebGPU başlatılamadı, WebGL'e geçiliyor:", e);
+				}
+			}
 
-    // WebGL fallback
-    return new BABYLON.Engine(canvas, true, {
-        preserveDrawingBuffer: true,
-        stencil: true,
-        disableWebGL2Support: true // Android 7 uyumu
-    });
-};
-
-            
-var createScene = async function () {
+			// WebGL fallback
+			return new BABYLON.Engine(canvas, true, {
+				preserveDrawingBuffer: true,
+				stencil: true,
+				disableWebGL2Support: true // Android 7 uyumu
+			});
+		};
+				
+        var createScene = async function () {
     var scene = new BABYLON.Scene(engine);
 
     var freeCamera = new BABYLON.FreeCamera("freeCam", new BABYLON.Vector3(0, 1.6, -10), scene);
@@ -129,12 +121,16 @@ function adjustButtonSizeByOrientation() {
 
     if (isPortrait) {
         // Dikey mod
-            enlargeButton.style.width = 'screen.width/24';
-            enlargeButton.style.height = 'screen.width/24';
+		enlargeButton.style.right = '0px';
+		enlargeButton.style.bottom = '0px';
+        enlargeButton.style.width = 'screen.width/24';
+        enlargeButton.style.height = 'screen.width/24';
     } else {
         // Yatay mod
-            enlargeButton.style.width = 'screen.height/24';
-            enlargeButton.style.height = 'screen.height/24';
+		enlargeButton.style.right = '0px';
+		enlargeButton.style.bottom = '0px';
+        enlargeButton.style.width = 'screen.height/24';
+        enlargeButton.style.height = 'screen.height/24';
     }
 }
 //window.addEventListener("resize", adjustButtonSizeByOrientation);
@@ -677,10 +673,6 @@ window.addEventListener("orientationchange", () => setTimeout(updateLabelPositio
     var ground = BABYLON.Mesh.CreateGround("ground1", 10, 10, 2, scene);
 
     return scene;
-};
-
-
-            
 };
                 window.initFunction = async function() {
                     
