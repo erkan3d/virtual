@@ -44,27 +44,10 @@
                 width: 100%;
                 height: 100%;
             }
-    #enlargeButton {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      width: 10vw;
-      height: 10vw;
-      background: url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center;
-      background-size: contain;
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-      z-index: 9999;}
+
         </style>
     </head>
     <body>
-        
-          <div id="canvasZone">
-    <canvas id="renderCanvas"></canvas>
-    <button id="enlargeButton" onclick="toggleVRMode()"></button>
-  </div>
-
         <div id="canvasZone"><canvas id="renderCanvas"></canvas></div>
         <script>
                     var canvas = document.getElementById("renderCanvas");
@@ -100,15 +83,15 @@
 
     const hudLayer = document.createElement('div');
     canvasParent.appendChild(hudLayer);
-/*
+
     const enlargeButton = document.createElement('button');
     enlargeButton.id = 'enlargeButton'; // ❗ Stil tanımı için ID veriyoruz
     hudLayer.appendChild(enlargeButton);
     enlargeButton.style.position = 'absolute';
-    enlargeButton.style.right = '0px';
-    enlargeButton.style.bottom = '0px';
-    enlargeButton.style.width = 'window.innerWidth/20';
-    enlargeButton.style.height = '48px';
+    //enlargeButton.style.right = '0px';
+    //enlargeButton.style.bottom = '0px';
+    //enlargeButton.style.width = '48px';
+    //enlargeButton.style.height = '48px';
     enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
     enlargeButton.style.backgroundSize = 'contain';
     enlargeButton.style.backgroundColor = 'transparent';
@@ -121,7 +104,21 @@
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
-*/
+function adjustButtonSizeByOrientation() {
+    if (window.innerHeight > window.innerWidth) {
+        // Dikey mod
+            enlargeButton.style.right = '0px';
+            enlargeButton.style.bottom = '0px';
+        enlargeButton.style.width = '148px';
+        enlargeButton.style.height = '148px';
+    } else {
+        // Yatay mod
+            enlargeButton.style.right = '0px';
+    enlargeButton.style.bottom = '0px';
+        enlargeButton.style.width = '48px';
+        enlargeButton.style.height = '48px';
+    }
+}
             
 window.addEventListener("resize", adjustButtonSizeByOrientation);
 window.addEventListener("orientationchange", adjustButtonSizeByOrientation);
@@ -197,8 +194,8 @@ async function handleFullscreenChange() {
         return;
       }
     }
-    //enlargeButton.style.width = '32px';
-    //enlargeButton.style.height = '32px';
+    enlargeButton.style.width = '32px';
+    enlargeButton.style.height = '32px';
     enlargeButton.style.filter = "invert(100%)"; //renkleri ters  çevir
     freeCamera.detachControl(canvas);
     vrCamera.attachControl(canvas, true);
@@ -207,8 +204,8 @@ async function handleFullscreenChange() {
     clearPreviousMeasurement();
 
   } else {
-    //enlargeButton.style.width = '48px';
-    //enlargeButton.style.height = '48px';
+    enlargeButton.style.width = '48px';
+    enlargeButton.style.height = '48px';
     enlargeButton.style.filter = "invert(0%)";
     vrCamera.detachControl(canvas);
     freeCamera.attachControl(canvas, true);
