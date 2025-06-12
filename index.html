@@ -102,8 +102,8 @@ var createScene = async function () {
     enlargeButton.style.position = 'absolute';
     enlargeButton.style.right = '0px';
     enlargeButton.style.bottom = '0px';
-    //enlargeButton.style.width = '148px';
-    //enlargeButton.style.height = '148px';
+    enlargeButton.style.width = '48px';
+    enlargeButton.style.height = '48px';
     enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
     enlargeButton.style.backgroundSize = 'contain';
     enlargeButton.style.backgroundColor = 'transparent';
@@ -153,18 +153,11 @@ function adjustButtonSizeByOrientation() {
     enlargeButton.style.width = `${size}px`;
     enlargeButton.style.height = `${size}px`;
 }
-*/	
+	
 
-const DEFAULT_PHYSICAL_SIZE = 48;
-
-function setButtonSizeInPhysicalPixels(physicalPx) {
-  const cssPx = physicalPx / window.devicePixelRatio;
-  enlargeButton.style.width = `${cssPx}px`;
-  enlargeButton.style.height = `${cssPx}px`;
-}
 
 function triggerAdjustButtonSize() {
-  setTimeout(() => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE), 300);
+  setTimeout(() => adjustButtonSizeByOrientation(DEFAULT_PHYSICAL_SIZE), 300);
 }
 
 window.addEventListener("resize", triggerAdjustButtonSize);
@@ -172,7 +165,7 @@ window.addEventListener("orientationchange", triggerAdjustButtonSize);
 window.addEventListener("load", () => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE));
 
 // İlk ayarlama
-setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE);
+adjustButtonSizeByOrientation(DEFAULT_PHYSICAL_SIZE);
 
 	
     let enlargeStatus = false;
@@ -185,7 +178,7 @@ setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE);
             enlargeStatus = false;
         }
     }
-
+*/
 // Cardboard şeridi (orta alan, başta pasif)
 const cardboardStrip = document.createElement('div');
 canvasParent.appendChild(cardboardStrip);
