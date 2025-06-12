@@ -81,27 +81,6 @@
 			});
 		};
 				
-/*
-		var createDefaultEngine = async function () {
-			if (BABYLON.WebGPUEngine && BABYLON.WebGPUEngine.IsSupported) {
-				try {
-					const webgpu = new BABYLON.WebGPUEngine(canvas);
-					await webgpu.initAsync();
-					return webgpu;
-				} catch (e) {
-					console.warn("WebGPU başlatılamadı, WebGL'e geçiliyor:", e);
-				}
-			}
-
-			// WebGL fallback
-			return new BABYLON.Engine(canvas, true, {
-				preserveDrawingBuffer: true,
-				stencil: true,
-				disableWebGL2Support: true // Android 7 uyumu
-			});
-		};
-
-*/
 var createScene = async function () {
     var scene = new BABYLON.Scene(engine);
 
