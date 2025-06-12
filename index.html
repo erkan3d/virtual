@@ -102,7 +102,7 @@ document.body.appendChild(enlargeButton);
 
 enlargeButton.style.position = 'fixed';  // fixed yapıldı, sayfaya sabitlendi
 enlargeButton.style.right = '0px';
-enlargeButton.style.bottom = '30px';
+enlargeButton.style.bottom = '0px';
 enlargeButton.style.width = '48px';
 enlargeButton.style.height = '48px';
 enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
@@ -222,7 +222,7 @@ var sensorPermissionGranted = false;
             vrExitButton.style.display = 'block'; // VR'de göster
             
             scene.activeCamera = vrCamera;
-            enlargeButton.style.backgroundImage = "url('https://cdn-icons-png.freepik.com/256/18672/18672116.png')";
+            enlargeButton.style.backgroundImage = "url('https://cdn-icons-png.freepik.com/256/14615/14615784.png')";
             cardboardStrip.style.pointerEvents = 'all';
             if (sensorPermissionGranted || !BABYLON.Engine.IsIOS) {
             scene.activeCamera = vrCamera;
