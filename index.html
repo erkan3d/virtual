@@ -117,7 +117,7 @@ var createScene = async function () {
         toggleVRMode();
     };
 
-
+/*
 async function setButtonSizeInPhysicalPixels() {
     const ratio = window.innerHeight > window.innerWidth
         ? window.innerHeight / window.innerWidth
@@ -155,7 +155,7 @@ function adjustButtonSizeByOrientation() {
     enlargeButton.style.height = `${size}px`;
 }
 	
-
+*/
 
 async function adjustButtonSizeByOrientation() {
     const ratio = window.innerHeight > window.innerWidth
@@ -177,19 +177,9 @@ window.addEventListener("load", () => setButtonSizeInPhysicalPixels(DEFAULT_PHYS
 
 // İlk ayarlama
 adjustButtonSizeByOrientation(DEFAULT_PHYSICAL_SIZE);
-*/
 
 
-function triggerAdjustButtonSize() {
-  setTimeout(() => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE), 300);
-}
 
-window.addEventListener("resize", triggerAdjustButtonSize);
-window.addEventListener("orientationchange", triggerAdjustButtonSize);
-window.addEventListener("load", () => setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE));
-
-// İlk ayarlama
-setButtonSizeInPhysicalPixels(DEFAULT_PHYSICAL_SIZE);
 
 
 
@@ -265,8 +255,8 @@ async function handleFullscreenChange() {
         return;
       }
     }
-//enlargeButton.style.width = '32px'
-//enlargeButton.style.height = '32px'
+enlargeButton.style.width = '32px'
+enlargeButton.style.height = '32px'
     enlargeButton.style.filter = "invert(100%)"; //renkleri ters  çevir
     freeCamera.detachControl(canvas);
     vrCamera.attachControl(canvas, true);
