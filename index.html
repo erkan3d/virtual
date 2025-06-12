@@ -105,22 +105,7 @@ var createScene = async function () {
     enlargeButton.onclick = async function () {
         toggleVRMode();
     };
-function adjustButtonSizeByOrientation() {
-    const isPortrait = screen.height > screen.width; // 🔁 ekranın fiziksel oranına bak
 
-    if (isPortrait) {
-        // Dikey mod
-            enlargeButton.style.width = 'screen.width/24';
-            enlargeButton.style.height = 'screen.width/24';
-    } else {
-        // Yatay mod
-            enlargeButton.style.width = 'screen.height/24';
-            enlargeButton.style.height = 'screen.height/24';
-    }
-}
-//window.addEventListener("resize", adjustButtonSizeByOrientation);
-window.addEventListener("orientationchange", adjustButtonSizeByOrientation);
-adjustButtonSizeByOrientation();
 
     let enlargeStatus = false;
     function toggleVRMode() {
