@@ -53,13 +53,18 @@
 
 <script>
 document.getElementById("startVR").addEventListener("click", function () {
-  const goFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.body.requestFullscreen().catch((err) => {
-        alert("Tam ekran geçişi başarısız: " + err);
-      });
-    }
-  };
+function goFullscreen(element) {
+  if (element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if (element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen(); // iOS Safari
+  } else if (element.msRequestFullscreen) {
+    element.msRequestFullscreen(); // eski IE desteği
+  } else {
+    alert("Tarayıcınız tam ekran modunu desteklemiyor.");
+  }
+}
+
 
   if (typeof DeviceOrientationEvent !== "undefined" &&
       typeof DeviceOrientationEvent.requestPermission === "function") {
