@@ -50,18 +50,34 @@
 <button id="startVR" style="position: fixed; right: 10px; bottom: 10px; z-index: 9999;">
   Start VR
 </button>
+
 <script>
-document.getElementById("startVR").addEventListener("click", async function () {
+document.getElementById("startVR").addEventListener("click", function () {
+  const goFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.body.requestFullscreen().catch((err) => {
+        alert("Tam ekran geçişi başarısız: " + err);
+      });
+    }
+  };
+
   if (typeof DeviceOrientationEvent !== "undefined" &&
       typeof DeviceOrientationEvent.requestPermission === "function") {
-    const response = await DeviceOrientationEvent.requestPermission();
-    if (response !== "granted") {
-      alert("Device orientation permission is required.");
-      return;
-    }
-  }
-  if (!document.fullscreenElement) {
-    await document.body.requestFullscreen();
+    // iOS: sensör izni gerekiyorsa, ayrı izin kutucuğu çıkar
+    DeviceOrientationEvent.requestPermission()
+      .then((response) => {
+        if (response === "granted") {
+          goFullscreen(); // hemen fullscreen tetikle
+        } else {
+          alert("Sensör izni reddedildi.");
+        }
+      })
+      .catch((err) => {
+        alert("İzin hatası: " + err);
+      });
+  } else {
+    // Android, masaüstü vs.
+    goFullscreen();
   }
 });
 </script>
@@ -180,7 +196,7 @@ vrExitButton.onclick = () => {
         toggleVRMode();
     };
 	
-	
+	*/
     let enlargeStatus = false;
     function toggleVRMode() {
         if (!enlargeStatus) {
@@ -191,7 +207,7 @@ vrExitButton.onclick = () => {
             enlargeStatus = false;
         }
     }
-*/
+
 // Cardboard şeridi (orta alan, başta pasif)
 const cardboardStrip = document.createElement('div');
 canvasParent.appendChild(cardboardStrip);
