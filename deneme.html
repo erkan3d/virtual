@@ -47,38 +47,26 @@
 </head>
 <body>
 <div id="canvasZone"><canvas id="renderCanvas"></canvas>
-<button id="startVR" style="position: fixed; right: 10px; bottom: 10px; z-index: 9999;">
-  Start VR
+<button id="startVR" style="position: fixed; right: 0px; bottom: 0px; z-index: 9999; background: none; border: none; padding: 0; cursor: pointer;">
+  <img src="https://cdn-icons-png.freepik.com/256/17460/17460854.png" alt="Start VR" style="width: 48px; height: 48px;">
 </button>
-
 <script>
-document.getElementById("startVR").addEventListener("click", function () {
-function goFullscreen(element) {
-  try {
-    element.requestFullscreen();
-  } catch (e) {
-      element.webkitRequestFullscreen();
-    }
-  }
-
+document.getElementById("startVR").addEventListener("click", async function () {
   if (typeof DeviceOrientationEvent !== "undefined" &&
       typeof DeviceOrientationEvent.requestPermission === "function") {
-    // iOS: sensör izni gerekiyorsa, ayrı izin kutucuğu çıkar
-    DeviceOrientationEvent.requestPermission()
-      .then((response) => {
-        if (response === "granted") {
-          goFullscreen(); // hemen fullscreen tetikle
-        } else {
-          alert("Sensör izni reddedildi.");
-        }
-      })
-      .catch((err) => {
-        alert("İzin hatası: " + err);
-      });
-  } else {
-    // Android, masaüstü vs.
-    goFullscreen();
+    const response = await DeviceOrientationEvent.requestPermission();
+    if (response !== "granted") {
+      alert("Device orientation permission is required.");
+      return;
+    }
   }
+  
+  try {
+	document.getElementById("canvasZone").webkitRequestFullscreen();
+  } catch (e) {
+	document.getElementById("canvasZone").requestFullscreen();
+  }
+
 });
 </script>
 </div>
@@ -130,24 +118,7 @@ var createScene = async function () {
 
     const hudLayer = document.createElement('div');
     canvasParent.appendChild(hudLayer);
-/*
-const enlargeButton = document.createElement('button');
-document.body.appendChild(enlargeButton);
 
-enlargeButton.style.position = 'fixed';  // fixed yapıldı, sayfaya sabitlendi
-enlargeButton.style.right = '0px';
-enlargeButton.style.bottom = '0px';
-enlargeButton.style.width = '48px';
-enlargeButton.style.height = '48px';
-enlargeButton.style.background = `url('https://cdn-icons-png.freepik.com/256/17460/17460854.png') no-repeat center`;
-enlargeButton.style.backgroundSize = 'contain';
-enlargeButton.style.backgroundColor = 'transparent';
-enlargeButton.style.border = 'none';
-enlargeButton.style.cursor = 'pointer';
-enlargeButton.style.pointerEvents = 'all';
-enlargeButton.style.zIndex = '9999';  // En üst z-index
-enlargeButton.style.transform = 'translateZ(0)';
-*/
 // 1. HUD layer içinde kullanılacak ikinci buton
 const vrExitButton = document.createElement('button');
 hudLayer.appendChild(vrExitButton)
@@ -172,42 +143,14 @@ vrExitButton.style.display = 'none';
 
 // Butona tıklayınca fullscreen'den çık
 vrExitButton.onclick = () => {
+try {
+    document.webkitExitFullscreen();
+} catch {
     document.exitFullscreen();
+}
 };
 
-/*
-    enlargeButton.onclick = async function () {
-        if (BABYLON.Engine.IsIOS && !sensorPermissionGranted) {
-            try {
-                if (typeof DeviceOrientationEvent !== 'undefined' &&
-                    typeof DeviceOrientationEvent.requestPermission === 'function') {
-                    const permission = await DeviceOrientationEvent.requestPermission();
-                    if (permission === 'granted') {
-                        sensorPermissionGranted = true;
-                        toggleVRMode();
-                    }
-                }
-            } catch (error) {
-                console.error("Sensör izni alınamadı:", error);
-            }
-            return;
-        }
 
-        toggleVRMode();
-    };
-	
-	
-    let enlargeStatus = false;
-    function toggleVRMode() {
-        if (!enlargeStatus) {
-            canvasParent.requestFullscreen();
-            enlargeStatus = true;
-        } else {
-            document.exitFullscreen();
-            enlargeStatus = false;
-        }
-    }
-*/
 // Cardboard şeridi (orta alan, başta pasif)
 const cardboardStrip = document.createElement('div');
 canvasParent.appendChild(cardboardStrip);
@@ -239,35 +182,29 @@ cardboardStrip.addEventListener("pointerup", (event) => {
     }
 });
 
-var usingVR = false;
-var sensorPermissionGranted = false;
+function handleFullscreenChange() {
+    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
 
-    document.addEventListener("fullscreenchange", () => {
-        if (!document.fullscreenElement) {
-            cardboardStrip.style.pointerEvents = 'none';
-            if (usingVR) {
-            scene.activeCamera = freeCamera;
-            freeCamera.attachControl(canvas);
-            vrCamera.detachControl(canvas);
-            usingVR = false;
-            //enlargeStatus = false;
-            vrExitButton.style.display = 'none'; // VR'den çıkınca gizle
-            }
-        } else {
-            vrExitButton.style.display = 'block'; // VR'de göster
-            
-            scene.activeCamera = vrCamera;
-            cardboardStrip.style.pointerEvents = 'all';
-            if (sensorPermissionGranted || !BABYLON.Engine.IsIOS) {
-            scene.activeCamera = vrCamera;
-            vrCamera.attachControl(canvas, true);
-            freeCamera.detachControl(canvas);
-            usingVR = true;
-            clearPreviousMeasurement();  
-            }
-        }
-    });
+    if (isFullscreen) {
+		document.getElementById('startVR').style.display = 'none';
+        vrExitButton.style.display = 'block';
+        scene.activeCamera = vrCamera;
+        cardboardStrip.style.pointerEvents = 'all';
+        vrCamera.attachControl(canvas, true);
+        freeCamera.detachControl(canvas);
+        clearPreviousMeasurement();
+    } else {
+		document.getElementById('startVR').style.display = 'block';
+        vrExitButton.style.display = 'none';
+        cardboardStrip.style.pointerEvents = 'none';
+        scene.activeCamera = freeCamera;
+        freeCamera.attachControl(canvas);
+        vrCamera.detachControl(canvas);
+    }
+}
 
+document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+document.addEventListener("fullscreenchange", handleFullscreenChange);
 
 
     // Yürüme kontrolü
